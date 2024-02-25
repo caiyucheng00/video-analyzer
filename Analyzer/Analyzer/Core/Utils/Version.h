@@ -1,7 +1,6 @@
-﻿#ifndef ANALYZER_VERSION_H
-#define ANALYZER_VERSION_H
-namespace AVSAnalyzer {
-#define PROJECT_VERSION "Analyzer v2"
+#ifndef __VERSION__H_
+#define __VERSION__H_
 
-}
+#define PROJECT_VERSION "Analyzer v1"
+
 #endif //ANALYZER_VERSION_H

@@ -1,0 +1,13 @@
+// config.json
+{
+  "adminHost": "http://127.0.0.1:9001",
+  "rootVideoDir": "D:\\",
+  "subVideoDirFormat": "%Y/%m/%d-%H-%M",
+  "controlExecutorMaxNum": 200,
+  "supportHardwareVideoDecode": false,
+  "supportHardwareVideoEncode": false,
+  "algorithmApiHosts": [
+    "http://127.0.0.1:5000"
+  ]
+
+}

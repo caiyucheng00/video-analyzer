@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+Analyzer/3rdparty/
+zlm/www/
+
 # User-specific files
 *.rsuser
 *.suo

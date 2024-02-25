@@ -85,4 +85,8 @@
       <UniqueIdentifier>{fa6f8f36-3dd0-4170-aebc-6cd5fe2cad52}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\config.json" />
+    <None Include="..\README.md" />
+  </ItemGroup>
 </Project>

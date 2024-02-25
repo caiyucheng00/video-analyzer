@@ -173,6 +173,10 @@
     <ClInclude Include="Core\Utils\Request.h" />
     <ClInclude Include="Core\Utils\Version.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\config.json" />
+    <None Include="..\README.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
