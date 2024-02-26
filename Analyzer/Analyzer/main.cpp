@@ -1,10 +1,16 @@
 #include "Core/Config.h"
-#include <iostream>
+#include "Core/Scheduler.h"
+#include "Core/Server.h"
 
 
-int main() {
+int main(int argc, char** argv) {
 	Config config("../config.json", "0.0.0.0", 9002);
 	config.show();
-	std::string str = "xyzer";
-	printf("test = %s", str);
+
+	Scheduler scheduler(&config);
+	Server server;
+	server.start(&scheduler);
+	while (1)
+	{
+	}
 }

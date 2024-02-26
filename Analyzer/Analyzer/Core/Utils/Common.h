@@ -1,13 +1,13 @@
-﻿#ifndef ANALYZER_COMMON_H
-#define ANALYZER_COMMON_H
+#ifndef __COMMON__H_
+#define __COMMON__H_
 
 #include <string>
 #include <vector>
 #include <chrono>
 
 
-namespace AVSAnalyzer {
-    static int64_t getCurTime()// 获取当前系统启动以来的毫秒数
+
+static int64_t getCurTime()// 获取当前系统启动以来的毫秒数
     {
 #ifndef WIN32
         // Linux系统
@@ -20,7 +20,7 @@ namespace AVSAnalyzer {
 #endif // !WIN32
 
     }
-    static int64_t getCurTimestamp()// 获取毫秒级时间戳（13位）
+static int64_t getCurTimestamp()// 获取毫秒级时间戳（13位）
     {
         return std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch()).
@@ -28,7 +28,7 @@ namespace AVSAnalyzer {
 
     }
 
-    static std::vector<std::string> split(const std::string& str, const std::string& sep) {
+static std::vector<std::string> split(const std::string& str, const std::string& sep) {
 
         std::vector<std::string> arr;
         int sepSize = sep.size();
@@ -49,7 +49,7 @@ namespace AVSAnalyzer {
     }
 
 
-    static bool removeFile(const std::string& filename) {
+static bool removeFile(const std::string& filename) {
 
         if (remove(filename.data()) == 0) {
             return true;
@@ -59,7 +59,7 @@ namespace AVSAnalyzer {
         }
     }
 
-    static int getRandomInt() {
+static int getRandomInt() {
         std::string numStr;
         numStr.append(std::to_string(rand() % 9 + 1));
         numStr.append(std::to_string(rand() % 10));
@@ -74,7 +74,5 @@ namespace AVSAnalyzer {
         return num;
     }
 
-
-};
 
 #endif //ANALYZER_COMMON_H
