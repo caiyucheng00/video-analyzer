@@ -1,10 +1,10 @@
 #include "Server.h"
 
-#ifdef WIN32
+
 #pragma comment(lib, "ws2_32.lib")
 #include <WinSock2.h>
 #include <WS2tcpip.h>
-#endif
+
 
 #include <event2/event.h>
 #include <event2/http.h>
@@ -24,7 +24,7 @@
 
 Server::Server()
 {
-#ifdef WIN32
+
 	WSADATA wdSockMsg;
 	int s = WSAStartup(MAKEWORD(2, 2), &wdSockMsg);
 
@@ -52,13 +52,12 @@ Server::Server()
 		LOGE("Version Error");
 		return;
 	}
-#endif
+
 
 }
 
 Server::~Server()
 {
-	LOGE("");
 #ifdef WIN32
 	WSACleanup();
 #endif
@@ -134,7 +133,7 @@ void api_controls(struct evhttp_request* req, void* arg)
 
 	if (reader->parse(buf, buf + std::strlen(buf), &root, &errs) && errs.empty()) {  // 解析请求成功
 		std::vector<Control*> controls;
-		int len = scheduler->apiControls(controls);
+		int len = scheduler->apiControls(controls);   // 传入空数组
 
 		if (len > 0) {    // controls有数据
 			int64_t curTimestamp = getCurTimestamp();  // 获取毫秒级时间戳（13位）

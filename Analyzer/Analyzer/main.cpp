@@ -10,7 +10,5 @@ int main(int argc, char** argv) {
 	Scheduler scheduler(&config);
 	Server server;
 	server.start(&scheduler);
-	while (1)
-	{
-	}
+	scheduler.loop();
 }
