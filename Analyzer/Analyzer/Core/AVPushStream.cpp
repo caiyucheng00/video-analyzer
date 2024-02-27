@@ -25,6 +25,11 @@ void AVPushStream::closeConnect()
 
 }
 
+void AVPushStream::pushVideoFrame(unsigned char* data, int size)
+{
+
+}
+
 void AVPushStream::EncodeVideoAndWriteStreamThread(void* arg)
 {
 

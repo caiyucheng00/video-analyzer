@@ -9,7 +9,7 @@
 
 static int64_t getCurTime()// 获取当前系统启动以来的毫秒数
     {
-#ifndef WIN32
+#ifdef WIN32
         // Linux系统
         //struct timespec now;// tv_sec (s) tv_nsec (ns-纳秒)
         //clock_gettime(CLOCK_MONOTONIC, &now);
