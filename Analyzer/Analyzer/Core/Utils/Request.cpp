@@ -1,8 +1,8 @@
-﻿#include "Request.h"
+#include "Request.h"
 #include <curl/curl.h>
 #include "Log.h"
 
-namespace AVSAnalyzer {
+
     inline size_t onWrite(void* buffer, size_t size, size_t nmemb, void* stream) {
 
         std::string* str = dynamic_cast<std::string*>((std::string*)stream);
@@ -131,4 +131,3 @@ namespace AVSAnalyzer {
         return result;
 
     }
-}

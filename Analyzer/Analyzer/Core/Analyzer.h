@@ -21,6 +21,7 @@ private:
 	Scheduler* _scheduler;
 	Control* _control;
 	Algorithm* _algorithm;
+	std::vector<std::string> _classify;
 };
 
 #endif

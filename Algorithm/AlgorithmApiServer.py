@@ -12,6 +12,17 @@ from lib.OpenVinoYoloV5Detector import OpenVinoYoloV5Detector
 
 from flask import Flask,request
 app = Flask(__name__)
+@app.route("/image/imageClassify",methods=['POST'])
+def imageClassify():
+    data = {
+        "code": 0,
+        "msg": "unknown error",
+    }
+    data["code"] = 1000
+    data["msg"] = "success"
+    data["result"] = "PHE"
+    return json.dumps(data, ensure_ascii=False)
+
 @app.route("/image/objectDetect",methods=['POST'])
 def imageObjectDetect():
     data = {

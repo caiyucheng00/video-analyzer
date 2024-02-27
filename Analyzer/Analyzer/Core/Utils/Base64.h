@@ -1,8 +1,8 @@
-﻿#ifndef ANALYZER_BASE64_H
+#ifndef ANALYZER_BASE64_H
 #define ANALYZER_BASE64_H
 #include <string>
 
-namespace AVSAnalyzer {
+
 
     using namespace std;
 
@@ -98,7 +98,7 @@ namespace AVSAnalyzer {
 
     }
 
-}
+
 
 
 #endif //ANALYZER_BASE64_H

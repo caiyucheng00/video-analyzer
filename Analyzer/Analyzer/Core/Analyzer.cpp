@@ -1,21 +1,14 @@
 #include "Analyzer.h"
 #include <opencv2/opencv.hpp>
 #include "Control.h"
-#include "Algorithm.h"
-#include <json/json.h>
-#include "Utils/Request.h"
-#include "Utils/Log.h"
-#include "Utils/Common.h"
-#include "Utils/Base64.h"
 #include "Scheduler.h"
-#include "Config.h"
-
+#include "AlgorithmWithAPI.h"
 
 Analyzer::Analyzer(Scheduler* scheduler, Control* control) :
 	_scheduler(scheduler),
 	_control(control)
 {
-	_algorithm = new Algorithm();    // 及时delete
+	_algorithm = new AlgorithmWithAPI(_scheduler->getConfig());   // 及时delete
 }
 
 Analyzer::~Analyzer()
@@ -32,11 +25,14 @@ void Analyzer::checkVideoFrame(bool check, int64_t frameCount, unsigned char* da
 	cv::Mat image(_control->videoHeight, _control->videoWidth, CV_8UC3, data);
 	
 	if (check) {
-
+		_algorithm->imageClassify(_control->videoHeight, _control->videoWidth, data, _classify);
+		if (_classify.size() > 0) {
+			class_name = _classify[0];
+		}
 	}
 
 	cv::putText(image, class_name, cv::Point(100, 150), cv::FONT_HERSHEY_SIMPLEX, _control->videoWidth / 1000, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
-	std::string info = "checkFps:" + std::to_string(_control->checkFps);
+	std::string info = "checkFps:" + std::to_string(_control->checkFps);  //ControlExecutor::DecodeAndAnalyzeVideoThread 计算得到
 	cv::putText(image, info, cv::Point(20, 40), cv::FONT_HERSHEY_COMPLEX, _control->videoWidth / 1000, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 }
 

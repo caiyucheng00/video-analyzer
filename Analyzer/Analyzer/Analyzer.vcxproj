@@ -141,10 +141,11 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>..\3rdparty\curl\x64\lib\Debug\libcurld.lib;..\3rdparty\event\x64\lib\Debug\*;ws2_32.lib;iphlpapi.lib;..\3rdparty\jsoncpp\x64\lib\Debug\jsoncpp.lib;..\3rdparty\opencv\x64\vc15\lib\opencv_world3410d.lib;..\3rdparty\opencv\x64\vc15\lib\opencv_world3410.lib;avcodec.lib;avformat.lib;avutil.lib;avdevice.lib;avfilter.lib;postproc.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\opencv\x64\vc15\lib;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\ffmpeg\x64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\curl\x64\lib\Debug;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\curl\x64\lib\Release;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\opencv\x64\vc15\lib;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\ffmpeg\x64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\AlgorithmWithAPI.cpp" />
     <ClCompile Include="Core\Algorithm.cpp" />
     <ClCompile Include="Core\Analyzer.cpp" />
     <ClCompile Include="Core\AVPullStream.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="Core\Scheduler.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\AlgorithmWithAPI.h" />
     <ClInclude Include="Core\Algorithm.h" />
     <ClInclude Include="Core\Analyzer.h" />
     <ClInclude Include="Core\AVPullStream.h" />

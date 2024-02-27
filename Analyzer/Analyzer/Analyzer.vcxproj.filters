@@ -32,6 +32,9 @@
     <ClCompile Include="Core\Server.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\AlgorithmWithAPI.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Algorithm.h">
@@ -75,6 +78,9 @@
     </ClInclude>
     <ClInclude Include="Core\Utils\Version.h">
       <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\AlgorithmWithAPI.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

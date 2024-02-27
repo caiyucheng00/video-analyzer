@@ -1,4 +1,4 @@
-﻿#ifndef ANALYZER_REQUEST_H
+#ifndef ANALYZER_REQUEST_H
 #define ANALYZER_REQUEST_H
 /*
 curl 静态库下载地址
@@ -17,7 +17,7 @@ https://blog.csdn.net/houxian1103/article/details/123343248
 
 */
 #include <string>
-namespace AVSAnalyzer {
+
     class Request
     {
     public:
@@ -29,5 +29,5 @@ namespace AVSAnalyzer {
         bool post(const char* url, const char* data, std::string& response);
 
     };
-}
+
 #endif //ANALYZER_REQUEST_H
