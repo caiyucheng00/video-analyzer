@@ -11,6 +11,39 @@ class AVPullStream;
 class AVPushStream;
 class Analyzer;
 
+struct VideoFrame
+{
+public:
+	enum VideoFrameType
+	{
+		BGR = 0,
+		YUV420P,
+
+	};
+	VideoFrame(VideoFrameType type, int size, int width, int height) {
+		this->type = type;
+		this->size = size;
+		this->width = width;
+		this->height = height;
+		this->data = new uint8_t[this->size];
+
+	}
+	~VideoFrame() {
+		delete[] this->data;
+		this->data = nullptr;
+	}
+
+	VideoFrameType type;
+	int size;
+	int width;
+	int height;
+	uint8_t* data;
+	bool happen = false;// 是否发生事件
+	float happenScore = 0;// 发生事件的分数
+
+
+};
+
 class ControlExecutor
 {
 public:

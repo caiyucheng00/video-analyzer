@@ -91,7 +91,7 @@ bool ControlExecutor::start(std::string& result_msg)
 	std::thread* th = new std::thread(AVPullStream::ReadThread, this);   // 1.拉流媒体流:pushVideoPacket TO queue
 	_threads.push_back(th);
 
-	th = new std::thread(ControlExecutor::DecodeAndAnalyzeVideoThread, this);  // 2.解码视频帧和实时分析视频帧
+	th = new std::thread(ControlExecutor::DecodeAndAnalyzeVideoThread, this);  // 2.解码视频帧和实时分析视频帧： 算法+pushVideoFrame TO queue
 	_threads.push_back(th);
 
 	if (_control->pushStream) {                                          // 如果推流 3.编码视频帧并推流
