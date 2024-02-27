@@ -5,7 +5,7 @@ venv
 venv*
 app/__pycache__
 framework/__pycache__
-
+static/
 
 
 
