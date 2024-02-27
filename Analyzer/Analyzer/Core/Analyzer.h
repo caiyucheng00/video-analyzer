@@ -6,6 +6,7 @@
 
 class Scheduler;
 class Control;
+class Algorithm;
 
 class Analyzer
 {
@@ -16,6 +17,10 @@ public:
 	void checkVideoFrame(bool check, int64_t frameCount, unsigned char* data);
 	void checkAudioFrame(bool check, int64_t frameCount, unsigned char* data, int size);
 
+private:
+	Scheduler* _scheduler;
+	Control* _control;
+	Algorithm* _algorithm;
 };
 
 #endif
