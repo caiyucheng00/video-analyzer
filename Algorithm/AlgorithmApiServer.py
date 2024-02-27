@@ -39,6 +39,12 @@ def imageObjectDetect():
     appKey = params.get("appKey")
     image_base64 = params.get("image_base64", None)  # 接收base64编码的图片并转换成cv2的图片格式
 
+    openVinoYoloV5Detector_IN_conf = {
+        "weight_file": "weights/yolov5n_openvino_model/yolov5n.xml",
+        "device": "CPU"
+    }
+
+    openVinoYoloV5Detector = OpenVinoYoloV5Detector(IN_conf=openVinoYoloV5Detector_IN_conf)
 
     if image_base64:
         if algorithm_str in ["openvino_yolov5"]:
@@ -82,12 +88,6 @@ if __name__ == "__main__":
     weights_root_path = flags.weights
     debug = True if 1 == debug else False
 
-    openVinoYoloV5Detector_IN_conf = {
-        "weight_file": "weights/yolov5n_openvino_model/yolov5n.xml",
-        "device": "CPU"
-    }
-
-    openVinoYoloV5Detector = OpenVinoYoloV5Detector(IN_conf=openVinoYoloV5Detector_IN_conf)
 
 
     app.run(host="0.0.0.0",port=port,debug=debug)
