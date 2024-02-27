@@ -75,6 +75,8 @@ public:
 	void apiControlCancel(Control* control, int& result_code, std::string& result_msg);
 	// ApiServer 对应的函数 end
 
+	friend class ControlExecutor; // 可访问私有方法
+
 private:
 	int  getExecutorMapSize();
 	bool isAdd(Control* control);

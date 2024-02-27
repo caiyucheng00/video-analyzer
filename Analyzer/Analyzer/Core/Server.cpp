@@ -1,10 +1,11 @@
 #include "Server.h"
 
 
+#ifdef WIN32
 #pragma comment(lib, "ws2_32.lib")
 #include <WinSock2.h>
 #include <WS2tcpip.h>
-
+#endif
 
 #include <event2/event.h>
 #include <event2/http.h>
@@ -24,7 +25,7 @@
 
 Server::Server()
 {
-
+#ifdef WIN32
 	WSADATA wdSockMsg;
 	int s = WSAStartup(MAKEWORD(2, 2), &wdSockMsg);
 
@@ -52,7 +53,7 @@ Server::Server()
 		LOGE("Version Error");
 		return;
 	}
-
+#endif
 
 }
 

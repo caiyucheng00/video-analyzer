@@ -11,9 +11,9 @@ static int64_t getCurTime()// 获取当前系统启动以来的毫秒数
     {
 #ifndef WIN32
         // Linux系统
-        struct timespec now;// tv_sec (s) tv_nsec (ns-纳秒)
-        clock_gettime(CLOCK_MONOTONIC, &now);
-        return (now.tv_sec * 1000 + now.tv_nsec / 1000000);
+        //struct timespec now;// tv_sec (s) tv_nsec (ns-纳秒)
+        //clock_gettime(CLOCK_MONOTONIC, &now);
+        //return (now.tv_sec * 1000 + now.tv_nsec / 1000000);
 #else
         long long now = std::chrono::steady_clock::now().time_since_epoch().count();
         return now / 1000000;
