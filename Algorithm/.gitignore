@@ -7,3 +7,7 @@ __pycache__
 # packets
 weights/
 lib/__pycache__
+show_single/
+
+*.png
+*.jpg

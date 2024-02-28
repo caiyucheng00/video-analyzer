@@ -7,6 +7,20 @@
 #include "Utils/Common.h"
 #include "Utils/Request.h"
 #include "Utils/Log.h"
+//#include <windows.h>
+
+#ifndef WIN32
+#include <opencv2/opencv.hpp>
+#else
+#ifndef _DEBUG
+#include <turbojpeg.h>
+#else
+#include <opencv2/opencv.hpp>
+#endif
+#endif
+
+
+
 
 AlgorithmWithAPI::AlgorithmWithAPI(Config* config) :
 	_config(config)
@@ -46,7 +60,7 @@ void AlgorithmWithAPI::imageClassify(int height, int width, unsigned char* bgr, 
 	int64_t t4 = getCurTime();
 
 	classify.push_back(response);
-	LOGE("%s", response.data());
+	LOGI("%s", response.data());
 }
 
 bool AlgorithmWithAPI::analy_turboJpeg_compress(int height, int width, int channels, unsigned char* bgr, unsigned char*& out_data, unsigned long* out_size)

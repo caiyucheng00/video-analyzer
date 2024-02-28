@@ -5,6 +5,8 @@
 
 Analyzer/3rdparty/
 zlm/www/
+zlm/log/
+data/
 
 # User-specific files
 *.rsuser

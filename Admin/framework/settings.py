@@ -27,7 +27,6 @@ ConfigObj = {
     "mediaHttpHost" : "http://127.0.0.1:80",
     "mediaRtmpHost" : "rtmp://127.0.0.1:1935",
     "mediaRtspHost" : "rtsp://127.0.0.1:554",
-    # "analyzerApiHost" : "http://192.168.1.3:9002"
     "analyzerApiHost" : "http://127.0.0.1:9002"
 }
 

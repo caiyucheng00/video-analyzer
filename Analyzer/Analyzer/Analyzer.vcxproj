@@ -157,6 +157,7 @@
     <ClCompile Include="Core\Utils\Request.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Core\Scheduler.cpp" />
+    <ClCompile Include="Core\Utils\PutText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\AlgorithmWithAPI.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="Core\Utils\Log.h" />
     <ClInclude Include="Core\Utils\Request.h" />
     <ClInclude Include="Core\Utils\Version.h" />
+    <ClInclude Include="Core\Utils\PutText.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\config.json" />

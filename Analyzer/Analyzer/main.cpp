@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
 		{
 		case 'h': {
 			//打印help信息
-			printf("-h 打印参数配置信息并退出\n");
+			printf("-h 打印参数配置信息并退出 \n");
 			printf("-f 配置文件    如：-f conf.json \n");
 			printf("-i api服务IP   如：-i 0.0.0.0 \n");
 			printf("-p api服务端口 如：-p 9002 \n");
