@@ -5,10 +5,5 @@
 __pycache__
 
 # packets
-venv_rtx3060
-venv*
+weights/
 lib/__pycache__
-
-
-
-
