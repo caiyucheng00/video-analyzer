@@ -164,8 +164,7 @@ void AVPushStream::closeConnect()
 
 void AVPushStream::pushVideoFrame(unsigned char* data, int size)
 {
-	VideoFrame* frame = NULL;
-	frame = new VideoFrame(VideoFrame::BGR, size, _control->videoWidth, _control->videoHeight);
+	VideoFrame* frame = new VideoFrame(VideoFrame::BGR, size, _control->videoWidth, _control->videoHeight);
 	frame->size = size;
 	memcpy(frame->data, data, size);
 
@@ -191,13 +190,6 @@ void AVPushStream::EncodeVideoAndWriteStreamThread(void* arg)
 	uint8_t* frame_yuv420p_buff = (uint8_t*)av_malloc(frame_yuv420p_buff_size);
 	av_image_fill_arrays(frame_yuv420p->data, frame_yuv420p->linesize,frame_yuv420p_buff,AV_PIX_FMT_YUV420P,width, height, 1);
 
-	//SwsContext* swsCtx = sws_getContext(width, height,
-	//	executor->_pushStream->_videoCodecCtx->pix_fmt,
-	//	executor->_pushStream->_videoCodecCtx->width,
-	//	executor->_pushStream->_videoCodecCtx->height,
-	//	AV_PIX_FMT_YUV420P,
-	//	SWS_BICUBIC, nullptr, nullptr, nullptr);
-
 	AVPacket* packet = av_packet_alloc();// 编码后的视频帧
 
 	int ret = -1;
@@ -209,10 +201,6 @@ void AVPushStream::EncodeVideoAndWriteStreamThread(void* arg)
 	while (executor->getState()) {   // 新建线程条件
 		if (executor->_pushStream->getVideoFrame(videoFrame, frameQueueSize)) {           // 填充frame（bgr）成功
 			executor->_pushStream->bgr24ToYuv420p(videoFrame->data, width, height, frame_yuv420p_buff);
-			/*av_frame_free(&frame_bgr);*/
-			/*sws_scale(swsCtx,
-				videoFrame->data, videoFrame->linesize, 0, height,
-				frame_yuv420p->data, frame_yuv420p->linesize);*/
 			delete videoFrame;
 			videoFrame = nullptr;
 

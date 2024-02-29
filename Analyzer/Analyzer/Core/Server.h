@@ -20,6 +20,7 @@ public:
 	// Returns:   void
 	// Qualifier: 新建线程：设置路由
 	//					   绑定socket 0.0.0.0:9002
+	//					   scheduler的state = true
 	// Parameter: void * arg scheduler
 	//************************************
 	void start(void* arg);
@@ -40,7 +41,7 @@ void api_index(struct evhttp_request* req, void* arg);
 // FullName:  api_controls
 // Access:    public 
 // Returns:   void
-// Qualifier: 获取数组，所有control
+// Qualifier: 获取数组，所有已经布控的control
 // Parameter: struct evhttp_request * req 
 // Parameter: void * arg scheduler
 //************************************
@@ -50,7 +51,7 @@ void api_controls(struct evhttp_request* req, void* arg);
 // FullName:  api_control
 // Access:    public 
 // Returns:   void
-// Qualifier: 根据req 获取一个control
+// Qualifier: 根据req 获取一个布控的control
 // Parameter: struct evhttp_request * req
 // Parameter: void * arg scheduler
 //************************************

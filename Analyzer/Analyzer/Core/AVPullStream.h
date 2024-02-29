@@ -19,7 +19,7 @@ public:
 	AVPullStream(Config* config, Control* control);
 	~AVPullStream();
 
-	bool connect();     // 连接流媒体服务
+	bool connect();     // 连接流媒体服务，填充control计算成员
 	bool reConnect();   // 重连流媒体服务
 	void closeConnect();// 关闭流媒体服务的连接
 

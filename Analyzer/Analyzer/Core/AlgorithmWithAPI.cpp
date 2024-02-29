@@ -33,14 +33,11 @@ AlgorithmWithAPI::~AlgorithmWithAPI()
 
 }
 
-void AlgorithmWithAPI::imageClassify(int height, int width, unsigned char* bgr, std::vector<std::string>& classify)
+void AlgorithmWithAPI::imageClassify(int height, int width, unsigned char* bgr, std::string& classify_result)
 {
 	cv::Mat image(height, width, CV_8UC3, bgr);
-
-	int64_t t1 = getCurTime();
 	std::string imageBase64;
 	analy_compressBgrAndEncodeBase64(image.rows, image.cols, 3, image.data, imageBase64);
-	int64_t t2 = getCurTime();
 
 	int randIndex = rand() % _config->algorithmApiHosts.size();
 	std::string host = _config->algorithmApiHosts[randIndex];
@@ -53,14 +50,22 @@ void AlgorithmWithAPI::imageClassify(int height, int width, unsigned char* bgr, 
 	std::string data = param.toStyledString();
 	param = NULL;
 
-	int64_t t3 = getCurTime();
 	Request request;
 	std::string response;
-	bool result = request.post(url.data(), data.data(), response);
-	int64_t t4 = getCurTime();
-
-	classify.push_back(response);
+	request.post(url.data(), data.data(), response);
 	LOGI("%s", response.data());
+
+	Json::CharReaderBuilder builder;  //json.h
+	const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+	Json::Value root;
+	JSONCPP_STRING errs;
+	if (reader->parse(response.c_str(), response.c_str() + std::strlen(response.c_str()), &root, &errs)) {
+		classify_result = root["result"].asString();
+	}
+	else
+	{
+		classify_result = "";
+	}
 }
 
 bool AlgorithmWithAPI::analy_turboJpeg_compress(int height, int width, int channels, unsigned char* bgr, unsigned char*& out_data, unsigned long* out_size)

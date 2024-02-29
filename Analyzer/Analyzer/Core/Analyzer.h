@@ -14,14 +14,17 @@ public:
 	explicit Analyzer(Scheduler* scheduler, Control* control);
 	~Analyzer();
 
-	void checkVideoFrame(bool check, int64_t frameCount, unsigned char* data);
+	void checkVideoFrame(bool check, unsigned char* data);
 	void checkAudioFrame(bool check, int64_t frameCount, unsigned char* data, int size);
 
 private:
 	Scheduler* _scheduler;
 	Control* _control;
 	Algorithm* _algorithm;
-	std::vector<std::string> _classify;
+
+	std::string classify_result;
+	std::string show_str = "当前小麦生育期： ";
+	std::string result_str;
 };
 
 #endif

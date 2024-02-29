@@ -14,6 +14,14 @@ class Control;
 class Scheduler
 {
 public:
+	//************************************
+	// Method:    Scheduler
+	// FullName:  Scheduler::Scheduler
+	// Access:    public 
+	// Returns:   
+	// Qualifier: Config配置文件由Scheduler获取，初始化时_state = false
+	// Parameter: Config * config
+	//************************************
 	Scheduler(Config* config);
 	~Scheduler();
 

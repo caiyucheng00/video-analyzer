@@ -1,12 +1,4 @@
 #include "Server.h"
-
-
-#ifdef WIN32
-#pragma comment(lib, "ws2_32.lib")
-#include <WinSock2.h>
-#include <WS2tcpip.h>
-#endif
-
 #include <event2/event.h>
 #include <event2/http.h>
 #include <event2/buffer.h>
@@ -20,6 +12,12 @@
 #include "Utils/Log.h"
 #include "Utils/Common.h"
 #include <iostream>
+
+#ifdef WIN32
+#pragma comment(lib, "ws2_32.lib")
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#endif
 
 #define RECV_BUF_MAX_SIZE 1024*8
 
@@ -40,21 +38,20 @@ Server::Server()
 			printf("请更新网络库");
 			break;
 		case WSAEINPROGRESS: 
-			printf("WSAEINPROGRESS");
+			printf("请重新启动");
 			break;
 		case WSAEPROCLIM:  
-			printf("WSAEPROCLIM");
+			printf("请关闭不必要的软件，以确保有足够的网络资源");
 			break;
 		}
 	}
 
 	if (2 != HIBYTE(wdSockMsg.wVersion) || 2 != LOBYTE(wdSockMsg.wVersion))
 	{
-		LOGE("Version Error");
+		LOGE("网络库版本错误");
 		return;
 	}
 #endif
-
 }
 
 Server::~Server()
@@ -93,7 +90,7 @@ void Server::start(void* arg)
 		evhttp_free(http);
 		event_config_free(evt_config);
 
-		scheduler->setState(false); // ?
+		scheduler->setState(false); // 结束Scheduler::loop()
 		}, scheduler).detach();  // 线程分离
 }
 

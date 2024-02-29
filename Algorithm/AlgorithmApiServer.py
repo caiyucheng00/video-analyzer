@@ -9,7 +9,7 @@ import io
 # from turbojpeg import TurboJPEG
 
 from lib.OpenVinoYoloV5Detector import OpenVinoYoloV5Detector
-from ResNet_Single_detect import init_model, detect_forward
+from ResNet_Single_detect import init_model, prediction
 
 # turboJpeg = TurboJPEG()
 
@@ -20,7 +20,7 @@ data_path = './show_single/'
 save_model_path = './weights/'
 res_size = 512
 k = 8
-resnet, device, transform = init_model(save_model_path, res_size, k)
+resnet, device, transform, labels = init_model(save_model_path, res_size, k)
 
 
 @app.route("/image/imageClassify", methods=['POST'])
@@ -42,20 +42,13 @@ def imageClassify():
     if image_base64:
         if algorithm_str in ["openvino_yolov5"]:
             encoded_image_byte = base64.b64decode(image_base64)
-            # 创建一个内存流对象
-            image_stream = io.BytesIO(encoded_image_byte)
-
-            # 使用PIL库打开图像
-            image_pil = Image.open(image_stream)
-            # image_array = np.frombuffer(encoded_image_byte, np.uint8)
-            # image = turboJpeg.decode(image_array)  # turbojpeg 解码
-            # image = cv2.imdecode(image_array, cv2.COLOR_RGB2BGR)  # opencv 解码
-            # PIL_image = Image.fromarray(image_array)  # 这里ndarray_image为原来的numpy数组类型的输入
+            image_stream = io.BytesIO(encoded_image_byte)  # 创建一个内存流对象
+            image_pil = Image.open(image_stream)  # 使用PIL库打开图像
             image = transform(image_pil)
             image = image.unsqueeze(0)
 
-
-            label = detect_forward(resnet, device, image)
+            index = prediction(resnet, device, image)
+            label = labels[index]
 
             data["code"] = 1000
             data["msg"] = "success"

@@ -36,7 +36,7 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Core\Utils\PutText.cpp">
-      <Filter>Core</Filter>
+      <Filter>Core\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,7 +86,7 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\Utils\PutText.h">
-      <Filter>Core</Filter>
+      <Filter>Core\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

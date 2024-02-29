@@ -47,12 +47,32 @@ public:
 class ControlExecutor
 {
 public:
+	//************************************
+	// Method:    ControlExecutor
+	// FullName:  ControlExecutor::ControlExecutor
+	// Access:    public 
+	// Returns:   
+	// Qualifier: 初始state = false
+	//			  设置control的执行器启动时毫秒级时间戳
+	// Parameter: Scheduler * scheduler
+	// Parameter: Control * control
+	//************************************
 	explicit ControlExecutor(Scheduler* scheduler, Control* control);
-	~ControlExecutor();
+	~ControlExecutor();   // 设置state = false
 
 	bool getState();
-	void setState_remove();
+	void setState_remove();  // 重连失败启用
 
+	//************************************
+	// Method:    start
+	// FullName:  ControlExecutor::start
+	// Access:    public 
+	// Returns:   bool 是否成功
+	// Qualifier: 新建类-AVPullStream/AVPushStream/Analyzer
+	//			  state=true
+	//            拉流媒体流+解码视频帧和实时分析视频帧+编码视频帧并推流
+	// Parameter: std::string & result_msg
+	//************************************
 	bool start(std::string& result_msg);
 
 	static void DecodeAndAnalyzeVideoThread(void* arg);// 解码视频帧和实时分析视频帧

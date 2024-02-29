@@ -7,7 +7,7 @@
 class Algorithm
 {
 public:
-	virtual void imageClassify(int height, int width, unsigned char* bgr, std::vector<std::string>& classify) = 0;
+	virtual void imageClassify(int height, int width, unsigned char* bgr, std::string& classify_result) = 0;
 };
 
 #endif
