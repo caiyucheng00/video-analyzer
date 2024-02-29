@@ -6,6 +6,7 @@
 #include "Scheduler.h"
 #include "AlgorithmWithAPI.h"
 #include "Utils/PutText.h"
+#include "Utils/Log.h"
 
 Analyzer::Analyzer(Scheduler* scheduler, Control* control) :
 	_scheduler(scheduler),
@@ -33,7 +34,8 @@ void Analyzer::checkVideoFrame(bool check, unsigned char* data)
 		}
 	}
 	
-	std::string show_gbk = UTF8ToGBK(show_str + result_str);
+	LOGI("%s", result_str);   //utf8
+	std::string show_gbk = UTF8ToGBK(show_str + result_str);   //gbk
 	const char* show_gbk_char = show_gbk.c_str();
 	putTextHusky(image, show_gbk_char, cv::Point(100, 150), cv::Scalar(0, 0, 255), 50, "Arial", false, false);
 	//cv::putText(image, class_name, cv::Point(100, 150), cv::FONT_HERSHEY,SIMPLEX, _control->videoWidth / 1000, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);

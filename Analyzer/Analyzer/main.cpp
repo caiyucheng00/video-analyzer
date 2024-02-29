@@ -1,13 +1,14 @@
 #include "Core/Config.h"
 #include "Core/Scheduler.h"
 #include "Core/Server.h"
+#include <windows.h>
 
 
 int main(int argc, char** argv) {
 #ifdef WIN32
 	srand(time(NULL));//时间初始化
 #endif // WIN32
-	
+	SetConsoleOutputCP(CP_UTF8);
 	const char* file = NULL;
 	const char* ip = "0.0.0.0";
 	short port = 9002;

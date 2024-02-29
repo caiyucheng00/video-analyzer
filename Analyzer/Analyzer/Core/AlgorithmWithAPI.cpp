@@ -53,7 +53,6 @@ void AlgorithmWithAPI::imageClassify(int height, int width, unsigned char* bgr, 
 	Request request;
 	std::string response;
 	request.post(url.data(), data.data(), response);
-	LOGI("%s", response.data());
 
 	Json::CharReaderBuilder builder;  //json.h
 	const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
