@@ -61,11 +61,11 @@ private:
 
 	std::queue<VideoFrame*>  _videoFrameQueue;
 	std::mutex				 _videoFrameQueueMtx;
-	std::queue <AudioFrame*> mAudioFrameQ;
-	std::mutex               mAudioFrameQ_mtx;
 
-	std::queue <AudioFrame*> mReusedAudioFrameQ;
-	std::mutex               mReusedAudioFrameQ_mtx;
+	std::queue <AudioFrame*> _audioFrameQueue;
+	std::mutex               _audioFrameQueueMtx;
+	std::queue <AudioFrame*> _reusedAudioFrameQueue;
+	std::mutex               _reusedAudioFrameQueueMtx;
 };
 
 #endif

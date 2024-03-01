@@ -34,7 +34,7 @@ void Analyzer::checkVideoFrame(bool check, unsigned char* data)
 		}
 	}
 	
-	LOGI("%s", result_str);   //utf8
+	//LOGI("%s", result_str);   //utf8
 	std::string show_gbk = UTF8ToGBK(show_str + result_str);   //gbk
 	const char* show_gbk_char = show_gbk.c_str();
 	putTextHusky(image, show_gbk_char, cv::Point(100, 150), cv::Scalar(0, 0, 255), 50, "Arial", false, false);

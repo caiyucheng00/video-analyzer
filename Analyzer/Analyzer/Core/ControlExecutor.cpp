@@ -239,7 +239,7 @@ void ControlExecutor::DecodeAndAnalyzeAudioThread(void* arg)
 	uint64_t out_channel_layout = AV_CH_LAYOUT_STEREO;
 	int out_channels = av_get_channel_layout_nb_channels(out_channel_layout);
 	AVSampleFormat out_sample_fmt = AV_SAMPLE_FMT_S16;//ffmpeg对于AAC编码的采样点格式默认只支持AV_SAMPLE_FMT_FLTP，通常PCM文件或者播放器播放的音频采样点格式是 AV_SAMPLE_FMT_S16
-	int out_sample_rate = 44100;//采样率
+	int out_sample_rate = 48000;//采样率
 	int out_nb_samples = 1024;//每帧单个通道的采样点数
 	// 音频重采样输出参数end
 

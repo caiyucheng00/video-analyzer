@@ -222,15 +222,15 @@ void AVPushStream::pushAudioFrame(unsigned char* data, int size)
 	AudioFrame* frame = NULL;
 	for (int i = 0; i < 6; i++)
 	{
-		mReusedAudioFrameQ_mtx.lock();
-		if (!mReusedAudioFrameQ.empty()) {
-			frame = mReusedAudioFrameQ.front();
-			mReusedAudioFrameQ.pop();
-			mReusedAudioFrameQ_mtx.unlock();
+		_reusedAudioFrameQueueMtx.lock();
+		if (!_reusedAudioFrameQueue.empty()) {
+			frame = _reusedAudioFrameQueue.front();
+			_reusedAudioFrameQueue.pop();
+			_reusedAudioFrameQueueMtx.unlock();
 			break;
 		}
 		else {
-			mReusedAudioFrameQ_mtx.unlock();
+			_reusedAudioFrameQueueMtx.unlock();
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 	}
@@ -239,12 +239,12 @@ void AVPushStream::pushAudioFrame(unsigned char* data, int size)
 		frame->size = size;
 		memcpy(frame->data, data, size);
 
-		mAudioFrameQ_mtx.lock();
-		mAudioFrameQ.push(frame);
-		mAudioFrameQ_mtx.unlock();
+		_audioFrameQueueMtx.lock();
+		_audioFrameQueue.push(frame);
+		_audioFrameQueueMtx.unlock();
 	}
 	else {
-		LOGE("AvPushStream.mReusedAudioFrameQ is empty");
+		LOGE("ReusedAudioFrameQueue is empty");
 	}
 }
 
@@ -347,7 +347,7 @@ void AVPushStream::EncodeAudioAndWriteStreamThread(void* arg)
 	int in_channels = av_get_channel_layout_nb_channels(in_channel_layout);// 输入声道数
 	//in_channel_layout = av_get_default_channel_layout(in_channels);// 输入声道层
 	AVSampleFormat in_sample_fmt = AV_SAMPLE_FMT_S16;
-	int in_sample_rate = 44100;
+	int in_sample_rate = 48000;
 	int in_nb_samples = 1024;
 	// 音频输入参数end
 
@@ -355,7 +355,7 @@ void AVPushStream::EncodeAudioAndWriteStreamThread(void* arg)
 	uint64_t out_channel_layout = AV_CH_LAYOUT_STEREO;
 	int out_channels = av_get_channel_layout_nb_channels(out_channel_layout);
 	AVSampleFormat out_sample_fmt = AV_SAMPLE_FMT_FLTP;
-	int out_sample_rate = 44100;
+	int out_sample_rate = 48000;
 	int out_nb_samples = 1024;
 	// 音频重采样输出参数end
 
@@ -495,39 +495,39 @@ void AVPushStream::clearVideoFrameQueue()
 
 void AVPushStream::initAudioFrameQueue()
 {
-	mReusedAudioFrameQ_mtx.lock();
+	_reusedAudioFrameQueueMtx.lock();
 	AudioFrame* frame = NULL;
 	int size = 4096;
 
 	for (size_t i = 0; i < 10; i++)
 	{
 		frame = new AudioFrame(size);
-		mReusedAudioFrameQ.push(frame);
+		_reusedAudioFrameQueue.push(frame);
 	}
-	mReusedAudioFrameQ_mtx.unlock();
+	_reusedAudioFrameQueueMtx.unlock();
 }
 
 void AVPushStream::pushReusedAudioFrame(AudioFrame* frame)
 {
-	mReusedAudioFrameQ_mtx.lock();
-	mReusedAudioFrameQ.push(frame);
-	mReusedAudioFrameQ_mtx.unlock();
+	_reusedAudioFrameQueueMtx.lock();
+	_reusedAudioFrameQueue.push(frame);
+	_reusedAudioFrameQueueMtx.unlock();
 }
 
 bool AVPushStream::getAudioFrame(AudioFrame*& frame, int& frameQueueSize)
 {
-	mAudioFrameQ_mtx.lock();
+	_audioFrameQueueMtx.lock();
 
-	if (!mAudioFrameQ.empty()) {
-		frame = mAudioFrameQ.front();
-		mAudioFrameQ.pop();
-		frameQueueSize = mAudioFrameQ.size();
-		mAudioFrameQ_mtx.unlock();
+	if (!_audioFrameQueue.empty()) {
+		frame = _audioFrameQueue.front();
+		_audioFrameQueue.pop();
+		frameQueueSize = _audioFrameQueue.size();
+		_audioFrameQueueMtx.unlock();
 		return true;
 
 	}
 	else {
-		mAudioFrameQ_mtx.unlock();
+		_audioFrameQueueMtx.unlock();
 		return false;
 	}
 }
@@ -535,27 +535,27 @@ bool AVPushStream::getAudioFrame(AudioFrame*& frame, int& frameQueueSize)
 
 void AVPushStream::clearAudioFrameQueue()
 {
-	mAudioFrameQ_mtx.lock();
-	while (!mAudioFrameQ.empty())
+	_audioFrameQueueMtx.lock();
+	while (!_audioFrameQueue.empty())
 	{
-		AudioFrame* frame = mAudioFrameQ.front();
-		mAudioFrameQ.pop();
+		AudioFrame* frame = _audioFrameQueue.front();
+		_audioFrameQueue.pop();
 
 		delete frame;
 		frame = NULL;
 
 	}
-	mAudioFrameQ_mtx.unlock();
+	_audioFrameQueueMtx.unlock();
 
-	mReusedAudioFrameQ_mtx.lock();
-	while (!mReusedAudioFrameQ.empty())
+	_reusedAudioFrameQueueMtx.lock();
+	while (!_reusedAudioFrameQueue.empty())
 	{
-		AudioFrame* frame = mReusedAudioFrameQ.front();
-		mReusedAudioFrameQ.pop();
+		AudioFrame* frame = _reusedAudioFrameQueue.front();
+		_reusedAudioFrameQueue.pop();
 		delete frame;
 		frame = NULL;
 	}
-	mReusedAudioFrameQ_mtx.unlock();
+	_reusedAudioFrameQueueMtx.unlock();
 }
 
 
