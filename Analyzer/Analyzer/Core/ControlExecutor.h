@@ -40,8 +40,22 @@ public:
 	uint8_t* data;
 	bool happen = false;// 是否发生事件
 	float happenScore = 0;// 发生事件的分数
+};
 
+struct AudioFrame
+{
+public:
+	AudioFrame(int size) {
+		this->size = size;
+		this->data = new uint8_t[this->size];
+	}
+	~AudioFrame() {
+		delete[] this->data;
+		this->data = NULL;
+	}
 
+	int size;
+	uint8_t* data;
 };
 
 class ControlExecutor
@@ -76,6 +90,7 @@ public:
 	bool start(std::string& result_msg);
 
 	static void DecodeAndAnalyzeVideoThread(void* arg);// 解码视频帧和实时分析视频帧
+	static void DecodeAndAnalyzeAudioThread(void* arg);// 解码音频帧
 
 	Control* _control;
 	Scheduler* _scheduler;

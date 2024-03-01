@@ -100,7 +100,37 @@ bool AVPullStream::connect()
 	// video end;
 
 	// audio start
+	_control->audioIndex = -1;
+	for (int i = 0; i < _fmtCtx->nb_streams; i++)
+	{
+		if (_fmtCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO)
+		{
+			_control->audioIndex = i;
+			break;
+		}
+	}
 
+	if (_control->audioIndex > -1) {
+		AVCodecParameters* audioCodecPar = _fmtCtx->streams[_control->audioIndex]->codecpar;
+		AVCodec* audioCodec = avcodec_find_decoder(audioCodecPar->codec_id);
+		if (!audioCodec) {
+			LOGE("avcodec_find_decoder error");
+			return false;
+		}
+
+		_audioCodecCtx = avcodec_alloc_context3(audioCodec);
+		if (avcodec_parameters_to_context(_audioCodecCtx, audioCodecPar) != 0) {
+			LOGE("avcodec_parameters_to_context error");
+			return false;
+		}
+		if (avcodec_open2(_audioCodecCtx, audioCodec, nullptr) < 0) {
+			LOGE("avcodec_open2 error");
+			return false;
+		}
+	}
+	else {
+		LOGE("av_find_best_stream audio error audioIndex=%d", _control->audioIndex);
+	}
 	// audio end
 
 	if (_control->videoIndex <= -1) {
@@ -131,6 +161,7 @@ bool AVPullStream::reConnect()
 void AVPullStream::closeConnect()
 {
 	clearVideoPacketQueue();          // 清空队列
+	clearAudioPacketQueue();
 	std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
 	if (_videoCodecCtx) {
@@ -164,6 +195,23 @@ bool AVPullStream::getVideoPacket(AVPacket& packet, int& packetQueueSize)
 	}
 }
 
+bool AVPullStream::getAudioPacket(AVPacket& packet, int& packetQueueSize)
+{
+	_audioPacketQueueMtx.lock();
+
+	if (!_audioPacketQueue.empty()) {
+		packet = _audioPacketQueue.front();
+		_audioPacketQueue.pop();
+		packetQueueSize = _audioPacketQueue.size();
+		_audioPacketQueueMtx.unlock();
+		return true;
+	}
+	else {
+		_audioPacketQueueMtx.unlock();
+		return false;
+	}
+}
+
 void AVPullStream::ReadThread(void* arg)
 {
 	ControlExecutor* executor = (ControlExecutor*)arg;    // 附属于
@@ -178,7 +226,10 @@ void AVPullStream::ReadThread(void* arg)
 				executor->_pullStream->pushVideoPacket(packet);
 				std::this_thread::sleep_for(std::chrono::milliseconds(30));
 			}
-			else                                                         // 非视频
+			else if (packet.stream_index == executor->_control->audioIndex) { // 音频
+				executor->_pullStream->pushAudioPacket(packet);
+			}
+			else                                                         // 非音视频
 			{
 				av_packet_unref(&packet);
 			}
@@ -230,4 +281,29 @@ void AVPullStream::clearVideoPacketQueue()
 		av_packet_unref(&packet);
 	}
 	_videoPacketQueueMtx.unlock();
+}
+
+bool AVPullStream::pushAudioPacket(const AVPacket& packet)
+{
+	if (av_packet_make_refcounted((AVPacket*)&packet) < 0) {
+		return false;
+	}
+
+	_audioPacketQueueMtx.lock(); // ==================
+	_audioPacketQueue.push(packet);
+	_audioPacketQueueMtx.unlock(); // ==================
+
+	return true;
+}
+
+void AVPullStream::clearAudioPacketQueue()
+{
+	_audioPacketQueueMtx.lock();
+	while (!_audioPacketQueue.empty())
+	{
+		AVPacket packet = _audioPacketQueue.front();
+		_audioPacketQueue.pop();
+		av_packet_unref(&packet);
+	}
+	_audioPacketQueueMtx.unlock();
 }

@@ -38,17 +38,17 @@ Server::Server()
 			printf("请更新网络库");
 			break;
 		case WSAEINPROGRESS: 
-			printf("请重新启动");
+			printf("WSAEINPROGRESS");
 			break;
 		case WSAEPROCLIM:  
-			printf("请关闭不必要的软件，以确保有足够的网络资源");
+			printf("WSAEPROCLIM");
 			break;
 		}
 	}
 
 	if (2 != HIBYTE(wdSockMsg.wVersion) || 2 != LOBYTE(wdSockMsg.wVersion))
 	{
-		LOGE("网络库版本错误");
+		LOGE("Version Error");
 		return;
 	}
 #endif

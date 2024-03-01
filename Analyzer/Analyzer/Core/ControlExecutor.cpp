@@ -94,9 +94,19 @@ bool ControlExecutor::start(std::string& result_msg)
 	th = new std::thread(ControlExecutor::DecodeAndAnalyzeVideoThread, this);  // 2.解码视频帧和实时分析视频帧： getVideoPacket FROM queue + 算法 + pushVideoFrame TO queue
 	_threads.push_back(th);
 
+	if (_control->audioIndex > -1) {
+		th = new std::thread(ControlExecutor::DecodeAndAnalyzeAudioThread, this); // 2.解码音频帧
+		_threads.push_back(th);
+	}
+
 	if (_control->pushStream) {                                          // 如果推流 3.编码视频帧并推流
 		if (_control->videoIndex > -1) {
 			th = new std::thread(AVPushStream::EncodeVideoAndWriteStreamThread, this);
+			_threads.push_back(th);
+		}
+
+		if (_control->audioIndex > -1) {
+			th = new std::thread(AVPushStream::EncodeAudioAndWriteStreamThread, this);  // 3.编码音频帧
 			_threads.push_back(th);
 		}
 	}
@@ -206,5 +216,86 @@ void ControlExecutor::DecodeAndAnalyzeVideoThread(void* arg)
 	frame_bgr_buff = NULL;
 
 	sws_freeContext(swsCtx);
+	swsCtx = NULL;
+}
+
+void ControlExecutor::DecodeAndAnalyzeAudioThread(void* arg)
+{
+	ControlExecutor* executor = (ControlExecutor*)arg;
+
+	AVPacket packet; // 未解码的音频帧
+	int      packetQueueSize = 0; // 未解码音频帧队列当前长度
+	AVFrame* frame = av_frame_alloc();// pkt->解码->frame
+
+	// 音频输入参数start
+	int in_channels = executor->_pullStream->_audioCodecCtx->channels;// 输入声道数
+	uint64_t in_channel_layout = av_get_default_channel_layout(in_channels);// 输入声道层
+	AVSampleFormat in_sample_fmt = executor->_pullStream->_audioCodecCtx->sample_fmt;
+	int in_sample_rate = executor->_pullStream->_audioCodecCtx->sample_rate;
+	int in_nb_samples = executor->_pullStream->_audioCodecCtx->frame_size;
+	// 音频输入参数end
+
+	// 音频重采样输出参数start
+	uint64_t out_channel_layout = AV_CH_LAYOUT_STEREO;
+	int out_channels = av_get_channel_layout_nb_channels(out_channel_layout);
+	AVSampleFormat out_sample_fmt = AV_SAMPLE_FMT_S16;//ffmpeg对于AAC编码的采样点格式默认只支持AV_SAMPLE_FMT_FLTP，通常PCM文件或者播放器播放的音频采样点格式是 AV_SAMPLE_FMT_S16
+	int out_sample_rate = 44100;//采样率
+	int out_nb_samples = 1024;//每帧单个通道的采样点数
+	// 音频重采样输出参数end
+
+
+	struct SwrContext* swsCtx = swr_alloc();
+	swsCtx = swr_alloc_set_opts(swsCtx,
+		out_channel_layout,
+		out_sample_fmt,
+		out_sample_rate,
+		in_channel_layout,
+		in_sample_fmt,
+		in_sample_rate,
+		0, NULL);
+	swr_init(swsCtx);
+
+	int out_buff_size = av_samples_get_buffer_size(NULL, out_channels, out_nb_samples, out_sample_fmt, 1);
+	uint8_t* out_buff = (uint8_t*)av_malloc(out_buff_size);// 重采样得到的PCM
+
+	int ret = -1;
+	int64_t frameCount = 0;
+
+	while (executor->getState()) {   // 新建线程条件
+		if (executor->_pullStream->getAudioPacket(packet, packetQueueSize)) {      // 填充packet成功
+			if (executor->_control->audioIndex > -1) {
+				ret = avcodec_send_packet(executor->_pullStream->_audioCodecCtx, &packet);
+				if (ret == 0) {
+					while (avcodec_receive_frame(executor->_pullStream->_audioCodecCtx, frame) == 0)
+					{
+						frameCount++;
+
+						swr_convert(swsCtx, &out_buff, out_buff_size, (const uint8_t**)frame->data, frame->nb_samples);
+
+						if (executor->_control->pushStream) {
+							// 重采样的参数决定着一帧音频的数据是out_buff_size=4096
+							executor->_pushStream->pushAudioFrame(out_buff, out_buff_size);
+						}
+					}
+				}
+				else {
+					LOGE("avcodec_send_packet : ret=%d", ret);
+				}
+			}
+			av_packet_unref(&packet);
+		}
+		else
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(5));              // 填充packet失败
+		}
+	}
+
+	av_frame_free(&frame);
+	frame = NULL;
+
+	av_free(out_buff);
+	out_buff = NULL;
+
+	swr_free(&swsCtx);
 	swsCtx = NULL;
 }

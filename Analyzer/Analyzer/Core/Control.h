@@ -24,6 +24,9 @@ public:
 	int     videoChannel = 0;
 	int     videoIndex = -1;
 	int     videoFps = 0;
+
+	int		audioIndex = -1;
+	int		audioFps = 0;
 };
 
 #endif

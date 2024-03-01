@@ -16,7 +16,7 @@ AVPushStream::AVPushStream(Config* config, Control* control) :
 	_config(config),
 	_control(control)
 {
-
+	initAudioFrameQueue();
 }
 
 AVPushStream::~AVPushStream()
@@ -90,6 +90,48 @@ bool AVPushStream::connect()
 	_videoIndex = _videoStream->id;
 	// init video end
 
+	//audio start
+	if (_control->audioIndex > -1) {
+		AVCodec* audioCodec = avcodec_find_encoder(AV_CODEC_ID_AAC);
+		if (!audioCodec) {
+			LOGE("avcodec_find_decoder error");
+			return false;
+		}
+
+		_audioCodecCtx = avcodec_alloc_context3(audioCodec);
+		if (!_audioCodecCtx) {
+			LOGE("avcodec_alloc_context3 error");
+			return false;
+		}
+
+		_audioCodecCtx->codec_id = audioCodec->id;
+		_audioCodecCtx->codec_type = AVMEDIA_TYPE_AUDIO;
+		_audioCodecCtx->bit_rate = 128000;//音频码率
+		_audioCodecCtx->channel_layout = AV_CH_LAYOUT_STEREO;// 声道层
+		_audioCodecCtx->channels = av_get_channel_layout_nb_channels(_audioCodecCtx->channel_layout);// 声道数
+		_audioCodecCtx->sample_rate = 44100;//采样率
+		_audioCodecCtx->frame_size = 1024;//每帧单个通道的采样点数
+		_audioCodecCtx->profile = FF_PROFILE_AAC_LOW;
+		_audioCodecCtx->sample_fmt = AV_SAMPLE_FMT_FLTP;//ffmpeg对于AAC编码的采样点格式默认只支持AV_SAMPLE_FMT_FLTP，通常PCM文件或者播放器播放的音频采样点格式是 AV_SAMPLE_FMT_S16
+		_audioCodecCtx->time_base = { 1024, 44100 };
+		_audioCodecCtx->framerate = { 44100, 1024 };
+
+		// 将编码器上下文和编码器进行关联
+		if (avcodec_open2(_audioCodecCtx, audioCodec, NULL) < 0) {
+			LOGE("avcodec_open2 error");
+			return false;
+		}
+		_audioStream = avformat_new_stream(_fmtCtx, audioCodec);
+		if (!_audioStream) {
+			LOGE("avformat_new_stream error");
+			return false;
+		}
+		_audioStream->id = _fmtCtx->nb_streams - 1;
+		avcodec_parameters_from_context(_audioStream->codecpar, _audioCodecCtx);
+		_audioIndex = _audioStream->id;
+	}
+	//audio end
+
 	av_dump_format(_fmtCtx, 0, _control->pushStreamUrl.data(), 1);
 
 	// open output url
@@ -106,6 +148,7 @@ bool AVPushStream::connect()
 	av_dict_set(&fmt_opt, "rtsp_transport", "tcp", 0);
 
 	_fmtCtx->video_codec_id = _fmtCtx->oformat->video_codec;
+	_fmtCtx->audio_codec_id = _fmtCtx->oformat->audio_codec;
 
 	if (avformat_write_header(_fmtCtx, &fmt_opt) < 0) { // 调用该函数会将所有stream的time_base，自动设置一个值，通常是1/90000或1/1000，这表示一秒钟表示的时间基长度
 		LOGI("avformat_write_header error: pushStreamUrl=%s", _control->pushStreamUrl.data());
@@ -136,6 +179,7 @@ bool AVPushStream::reConnect()
 void AVPushStream::closeConnect()
 {
 	clearVideoFrameQueue();
+	clearAudioFrameQueue();
 	std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
 	if (_fmtCtx) {
@@ -172,6 +216,38 @@ void AVPushStream::pushVideoFrame(unsigned char* data, int size)
 	_videoFrameQueue.push(frame);
 	_videoFrameQueueMtx.unlock();
 }
+
+void AVPushStream::pushAudioFrame(unsigned char* data, int size)
+{
+	AudioFrame* frame = NULL;
+	for (int i = 0; i < 6; i++)
+	{
+		mReusedAudioFrameQ_mtx.lock();
+		if (!mReusedAudioFrameQ.empty()) {
+			frame = mReusedAudioFrameQ.front();
+			mReusedAudioFrameQ.pop();
+			mReusedAudioFrameQ_mtx.unlock();
+			break;
+		}
+		else {
+			mReusedAudioFrameQ_mtx.unlock();
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		}
+	}
+
+	if(frame){
+		frame->size = size;
+		memcpy(frame->data, data, size);
+
+		mAudioFrameQ_mtx.lock();
+		mAudioFrameQ.push(frame);
+		mAudioFrameQ_mtx.unlock();
+	}
+	else {
+		LOGE("AvPushStream.mReusedAudioFrameQ is empty");
+	}
+}
+
 
 void AVPushStream::EncodeVideoAndWriteStreamThread(void* arg)
 {
@@ -259,6 +335,135 @@ void AVPushStream::EncodeVideoAndWriteStreamThread(void* arg)
 	frame_yuv420p = NULL;
 }
 
+void AVPushStream::EncodeAudioAndWriteStreamThread(void* arg)
+{
+	ControlExecutor* executor = (ControlExecutor*)arg;
+
+	AudioFrame* audioFrame = NULL; // 未编码的音频帧（pcm格式）
+	int      audioFrameQueueSize = 0; // 未编码音频帧队列当前长度
+
+	 // 音频输入参数start
+	uint64_t in_channel_layout = AV_CH_LAYOUT_STEREO;// 输入声道层
+	int in_channels = av_get_channel_layout_nb_channels(in_channel_layout);// 输入声道数
+	//in_channel_layout = av_get_default_channel_layout(in_channels);// 输入声道层
+	AVSampleFormat in_sample_fmt = AV_SAMPLE_FMT_S16;
+	int in_sample_rate = 44100;
+	int in_nb_samples = 1024;
+	// 音频输入参数end
+
+   // 音频重采样输出参数start
+	uint64_t out_channel_layout = AV_CH_LAYOUT_STEREO;
+	int out_channels = av_get_channel_layout_nb_channels(out_channel_layout);
+	AVSampleFormat out_sample_fmt = AV_SAMPLE_FMT_FLTP;
+	int out_sample_rate = 44100;
+	int out_nb_samples = 1024;
+	// 音频重采样输出参数end
+
+	struct SwrContext* swsCtx = swr_alloc();
+	swsCtx = swr_alloc_set_opts(swsCtx,
+		out_channel_layout,
+		out_sample_fmt,
+		out_sample_rate,
+		in_channel_layout,
+		in_sample_fmt,
+		in_sample_rate,
+		0, NULL);
+	swr_init(swsCtx);
+
+	AVFrame* frame = av_frame_alloc();
+	frame->nb_samples = out_nb_samples;
+	frame->sample_rate = out_sample_rate;
+	frame->format = out_sample_fmt;
+	frame->channel_layout = out_channel_layout;
+	frame->channels = out_channels;
+
+	int frame_buff_size = av_samples_get_buffer_size(NULL, frame->channels, frame->nb_samples, out_sample_fmt, 1);
+	uint8_t* frame_buff = (uint8_t*)av_malloc(frame_buff_size);
+	avcodec_fill_audio_frame(frame, frame->channels, out_sample_fmt, (const uint8_t*)frame_buff, frame_buff_size, 1);
+
+	uint8_t** convert_data = (uint8_t**)calloc(out_channels, sizeof(*convert_data));
+	av_samples_alloc(convert_data, NULL, out_channels, out_nb_samples, out_sample_fmt, 0);
+
+	AVPacket* packet = av_packet_alloc();// 编码后的音频帧
+
+	int ret = -1;
+	int64_t  encodeSuccessCount = 0;
+	int64_t  frameCount = 0;
+
+	while (executor->getState()) {  // 新建线程条件
+		if (executor->_pushStream->getAudioFrame(audioFrame, audioFrameQueueSize)) {   //// 填充frame成功
+			memcpy(frame_buff, audioFrame->data, audioFrame->size);
+
+			swr_convert(swsCtx, convert_data, executor->_pushStream->_audioCodecCtx->frame_size,
+				(const uint8_t**)frame->data, frame->nb_samples);
+			memcpy(frame->data[0], convert_data[0], audioFrame->size);
+			memcpy(frame->data[1], convert_data[1], audioFrame->size);
+
+			executor->_pushStream->pushReusedAudioFrame(audioFrame);
+
+			frame->pts = frame->pkt_dts = av_rescale_q_rnd(frameCount,
+				executor->_pushStream->_audioCodecCtx->time_base,
+				executor->_pushStream->_audioStream->time_base,
+				(AVRounding)(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+
+			frame->pkt_duration = av_rescale_q_rnd(1,
+				executor->_pushStream->_audioCodecCtx->time_base,
+				executor->_pushStream->_audioStream->time_base,
+				(AVRounding)(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+
+			frame->pkt_pos = -1;
+
+			ret = avcodec_send_frame(executor->_pushStream->_audioCodecCtx, frame);
+			if (ret >= 0) {
+				while (avcodec_receive_packet(executor->_pushStream->_audioCodecCtx, packet) >= 0)
+				{
+					encodeSuccessCount++;
+
+					// 如果实际推流的是flv文件，不会执行里面的fix_packet_pts
+					if (packet->pts == AV_NOPTS_VALUE) {
+						LOGE("pkt->pts == AV_NOPTS_VALUE");
+					}
+					packet->stream_index = executor->_pushStream->_audioIndex;
+					packet->pos = -1;
+					packet->duration = frame->pkt_duration;
+
+					ret = av_interleaved_write_frame(executor->_pushStream->_fmtCtx, packet);
+					if (ret < 0) {
+						LOGE("av_interleaved_write_frame error : ret=%d", ret);
+					}
+				}
+			}
+			else
+			{
+				LOGE("avcodec_send_frame error : ret=%d", ret);
+			}
+
+			frameCount++;
+		}
+		else
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(2));
+		}
+	}
+
+	av_packet_unref(packet);
+	packet = NULL;
+
+	av_freep(&convert_data[0]);
+	convert_data[0] = NULL;
+	free(convert_data);
+	convert_data = NULL;
+
+	av_free(frame_buff);
+	frame_buff = NULL;
+
+	av_frame_free(&frame);
+	frame = NULL;
+
+	swr_free(&swsCtx);
+	swsCtx = NULL;
+}
+
 bool AVPushStream::getVideoFrame(VideoFrame*& frame, int& frameQueueSize)
 {
 	_videoFrameQueueMtx.lock();
@@ -287,6 +492,72 @@ void AVPushStream::clearVideoFrameQueue()
 	}
 	_videoFrameQueueMtx.unlock();
 }
+
+void AVPushStream::initAudioFrameQueue()
+{
+	mReusedAudioFrameQ_mtx.lock();
+	AudioFrame* frame = NULL;
+	int size = 4096;
+
+	for (size_t i = 0; i < 10; i++)
+	{
+		frame = new AudioFrame(size);
+		mReusedAudioFrameQ.push(frame);
+	}
+	mReusedAudioFrameQ_mtx.unlock();
+}
+
+void AVPushStream::pushReusedAudioFrame(AudioFrame* frame)
+{
+	mReusedAudioFrameQ_mtx.lock();
+	mReusedAudioFrameQ.push(frame);
+	mReusedAudioFrameQ_mtx.unlock();
+}
+
+bool AVPushStream::getAudioFrame(AudioFrame*& frame, int& frameQueueSize)
+{
+	mAudioFrameQ_mtx.lock();
+
+	if (!mAudioFrameQ.empty()) {
+		frame = mAudioFrameQ.front();
+		mAudioFrameQ.pop();
+		frameQueueSize = mAudioFrameQ.size();
+		mAudioFrameQ_mtx.unlock();
+		return true;
+
+	}
+	else {
+		mAudioFrameQ_mtx.unlock();
+		return false;
+	}
+}
+
+
+void AVPushStream::clearAudioFrameQueue()
+{
+	mAudioFrameQ_mtx.lock();
+	while (!mAudioFrameQ.empty())
+	{
+		AudioFrame* frame = mAudioFrameQ.front();
+		mAudioFrameQ.pop();
+
+		delete frame;
+		frame = NULL;
+
+	}
+	mAudioFrameQ_mtx.unlock();
+
+	mReusedAudioFrameQ_mtx.lock();
+	while (!mReusedAudioFrameQ.empty())
+	{
+		AudioFrame* frame = mReusedAudioFrameQ.front();
+		mReusedAudioFrameQ.pop();
+		delete frame;
+		frame = NULL;
+	}
+	mReusedAudioFrameQ_mtx.unlock();
+}
+
 
 unsigned char AVPushStream::clipValue(unsigned char x, unsigned char min_val, unsigned char  max_val) {
 
