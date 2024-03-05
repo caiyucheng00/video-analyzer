@@ -1,6 +1,7 @@
 #include "Core/Config.h"
 #include "Core/Scheduler.h"
 #include "Core/Server.h"
+#include "Core/AlgorithmWithPy.h"
 #include <windows.h>
 
 
@@ -56,11 +57,17 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 	config.show();
-
+	
 	Scheduler scheduler(&config);
 	Server server;
 	server.start(&scheduler);
 	scheduler.loop();
+	
+	//AlgorithmWithPy* algorithm = new AlgorithmWithPy(&config);
+	////algorithm->setData();
+	////algorithm->show();
+	//algorithm->objectDetect();
+	//delete algorithm;
 
 	return 0;
 }

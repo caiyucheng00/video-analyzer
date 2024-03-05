@@ -20,8 +20,6 @@
 #endif
 
 
-
-
 AlgorithmWithAPI::AlgorithmWithAPI(Config* config) :
 	_config(config)
 {

@@ -2,9 +2,11 @@
 #include <opencv2/opencv.hpp>
 #include <json/json.h>
 #include <json/value.h>
+#include <Python.h>
 #include "Control.h"
 #include "Scheduler.h"
 #include "AlgorithmWithAPI.h"
+#include "AlgorithmWithPy.h"
 #include "Utils/PutText.h"
 #include "Utils/Log.h"
 
@@ -12,7 +14,8 @@ Analyzer::Analyzer(Scheduler* scheduler, Control* control) :
 	_scheduler(scheduler),
 	_control(control)
 {
-	_algorithm = new AlgorithmWithAPI(_scheduler->getConfig());   // 及时delete
+	Py_SetPythonHome(L"D:\\Developer\\Python\\Anaconda3\\envs\\video-analyzer");
+	_algorithm = new AlgorithmWithPy(_scheduler->getConfig());   // 及时delete
 }
 
 Analyzer::~Analyzer()
@@ -43,7 +46,3 @@ void Analyzer::checkVideoFrame(bool check, unsigned char* data)
 	cv::putText(image, info, cv::Point(20, 40), cv::FONT_HERSHEY_COMPLEX, _control->videoWidth / 1000, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 }
 
-void Analyzer::checkAudioFrame(bool check, int64_t frameCount, unsigned char* data, int size)
-{
-
-}

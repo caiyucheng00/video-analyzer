@@ -7,6 +7,9 @@
 class Algorithm
 {
 public:
+	Algorithm();
+	virtual ~Algorithm();
+
 	virtual void imageClassify(int height, int width, unsigned char* bgr, std::string& classify_result) = 0;
 };
 

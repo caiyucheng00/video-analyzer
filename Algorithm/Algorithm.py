@@ -2,10 +2,10 @@ print("Algorithm.py")
 import sys
 import os
 
-root_path = os.path.dirname(__file__)
+# root_path = os.path.dirname(__file__)
 
-sys.path.append(root_path+"/venv/Lib/site-packages")
-sys.path.append(root_path+"/venv/Scripts")
+# sys.path.append(root_path+"/venv/Lib/site-packages")
+# sys.path.append(root_path+"/venv/Scripts")
 
 # root_path = os.path.dirname(__file__)
 # sys.path.append(root_path+"/Python/Lib/site-packages")
@@ -21,8 +21,6 @@ import json
 import cv2
 import numpy as np
 import base64
-from lib.OpenVinoYoloV5Detector import OpenVinoYoloV5Detector
-# from lib.OpenVinoSSDLiteDetector import OpenVinoSSDLiteDetector
 
 
 class Algorithm():
@@ -31,12 +29,12 @@ class Algorithm():
 
         print("\t",weights_path,params)
 
-        openVinoYoloV5Detector_IN_conf = {
-            "weight_file": weights_path+"/yolov5n_openvino_model/yolov5n.xml",
-            # "weight_file": weights_path+"/yolov5n.onnx",
-            "device": "GPU"
-        }
-        self.openVinoYoloV5Detector = OpenVinoYoloV5Detector(IN_conf=openVinoYoloV5Detector_IN_conf)
+        # openVinoYoloV5Detector_IN_conf = {
+        #     "weight_file": weights_path+"/yolov5n_openvino_model/yolov5n.xml",
+        #     # "weight_file": weights_path+"/yolov5n.onnx",
+        #     "device": "GPU"
+        # }
+        # self.openVinoYoloV5Detector = OpenVinoYoloV5Detector(IN_conf=openVinoYoloV5Detector_IN_conf)
 
         # openVinoSSDLiteDetector_IN_conf = {
         #     "weight_file": weights_path+"/ssdlite_mobilenet_v2/FP16/ssdlite_mobilenet_v2.xml",
@@ -49,39 +47,38 @@ class Algorithm():
         print("__del__.%s"%(self.__class__.__name__))
 
     def release(self):
-
         print("python.release")
         del self
 
-    def objectDetect(self,image_type,image):
-        """
-        @param image_type:  0:image为numpy格式的图片, 1:image为base64编码的jpg图片
-        @param image:
-        @return:
-        """
-        self.count += 1
-        # print("python.objectDetect: count=%d"%(self.count),type(image_type),image_type,type(image))
-
-        if 1 == image_type:
-            # 1 == image_type 则 image是str类型的 image_base64
-            encoded_image_byte = base64.b64decode(image)
-            image_array = np.frombuffer(encoded_image_byte, np.uint8)
-            image = cv2.imdecode(image_array, cv2.COLOR_RGB2BGR) # opencv 解码
-
-        detect_num, detect_data = self.openVinoYoloV5Detector.detect(image)
-        # detect_num, detect_data = self.openVinoSSDLiteDetector.detect(image)
-
-        # print("python.objectDetect:",type(image),image.shape,detect_num,detect_data,detect_msg)
-
-        data = {
-            "code": 1000,
-            "msg": "success",
-            "result": {
-                "detect_num": detect_num,
-                "detect_data": detect_data
-            }
-        }
-        return json.dumps(data,ensure_ascii=False)
+    # def objectDetect(self,image_type,image):
+    #     """
+    #     @param image_type:  0:image为numpy格式的图片, 1:image为base64编码的jpg图片
+    #     @param image:
+    #     @return:
+    #     """
+    #     self.count += 1
+    #     # print("python.objectDetect: count=%d"%(self.count),type(image_type),image_type,type(image))
+    #
+    #     if 1 == image_type:
+    #         # 1 == image_type 则 image是str类型的 image_base64
+    #         encoded_image_byte = base64.b64decode(image)
+    #         image_array = np.frombuffer(encoded_image_byte, np.uint8)
+    #         image = cv2.imdecode(image_array, cv2.COLOR_RGB2BGR) # opencv 解码
+    #
+    #     detect_num, detect_data = self.openVinoYoloV5Detector.detect(image)
+    #     # detect_num, detect_data = self.openVinoSSDLiteDetector.detect(image)
+    #
+    #     # print("python.objectDetect:",type(image),image.shape,detect_num,detect_data,detect_msg)
+    #
+    #     data = {
+    #         "code": 1000,
+    #         "msg": "success",
+    #         "result": {
+    #             "detect_num": detect_num,
+    #             "detect_data": detect_data
+    #         }
+    #     }
+    #     return json.dumps(data,ensure_ascii=False)
 
 
     def __checkWeightFile(self,weight_file):
@@ -89,6 +86,8 @@ class Algorithm():
             e = "weight_file=%s not found"%weight_file
             raise Exception(e)
 
+    def imageClassify(self, image_type,image):
+        print("python.imageClassify: count=%d" % (self.count), type(image_type), image_type, type(image))
 
 
 if __name__ == '__main__':

@@ -15,7 +15,6 @@ public:
 	~Analyzer();
 
 	void checkVideoFrame(bool check, unsigned char* data);
-	void checkAudioFrame(bool check, int64_t frameCount, unsigned char* data, int size);
 
 private:
 	Scheduler* _scheduler;

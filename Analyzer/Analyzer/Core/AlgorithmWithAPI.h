@@ -10,7 +10,7 @@ class AlgorithmWithAPI : public Algorithm
 public:
 	AlgorithmWithAPI() = delete;
 	AlgorithmWithAPI(Config* config);
-	~AlgorithmWithAPI();
+	virtual ~AlgorithmWithAPI();
 
 	virtual void imageClassify(int height, int width, unsigned char* bgr, std::string& classify_result);
 
