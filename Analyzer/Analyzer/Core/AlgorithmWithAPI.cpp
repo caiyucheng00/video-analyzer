@@ -43,7 +43,7 @@ void AlgorithmWithAPI::imageClassify(int height, int width, unsigned char* bgr, 
 
 	Json::Value param;
 	param["appKey"] = "s84dsd#7hf34r3jsk@fs$d#$dd";
-	param["algorithm"] = "openvino_yolov5";
+	param["algorithm"] = "ResNet50";
 	param["image_base64"] = imageBase64;
 	std::string data = param.toStyledString();
 	param = NULL;

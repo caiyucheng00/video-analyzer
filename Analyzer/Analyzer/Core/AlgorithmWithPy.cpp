@@ -29,7 +29,7 @@ AlgorithmWithPy::AlgorithmWithPy(Config* config) :
 
 	_object = PyEval_CallObject(_class, pyArgs);   // 实例化
 
-	_func_imageClassify = PyObject_GetAttrString(_object, "objectDetect");
+	_func_imageClassify = PyObject_GetAttrString(_object, "imageClassify");
 	_func_imageClassifyArgs = PyTuple_New(2);
 }
 
@@ -41,7 +41,6 @@ AlgorithmWithPy::~AlgorithmWithPy()
 void AlgorithmWithPy::imageClassify(int height, int width, unsigned char* bgr, std::string& classify_result)
 {
 	cv::Mat image(height, width, CV_8UC3, bgr);
-	//cv::Mat image = cv::imread("D:\\Developer\\Visual Studio\\Project\\PythonAPI\\test.jpg");
 
 #ifndef _DEBUG
 	// cv::Mat->numpy
@@ -56,7 +55,6 @@ void AlgorithmWithPy::imageClassify(int height, int width, unsigned char* bgr, s
 
 	PyTuple_SetItem(_func_imageClassifyArgs, 0, Py_BuildValue("i", 0));
 	PyTuple_SetItem(_func_imageClassifyArgs, 1, pyImage);
-
 #else
 	//cv::Mat->imageBase64
 	std::string imageBase64;

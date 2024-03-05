@@ -2,12 +2,10 @@
 .idea/
 
 # build
-__pycache__
+__pycache__/
 
 # packets
 weights/
-lib/__pycache__
-show_single/
 
 *.png
 *.jpg

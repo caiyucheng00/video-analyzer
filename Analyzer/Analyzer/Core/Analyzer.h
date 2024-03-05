@@ -4,20 +4,20 @@
 #include <string>
 #include <vector>
 
-class Scheduler;
+class Config;
 class Control;
 class Algorithm;
 
 class Analyzer
 {
 public:
-	explicit Analyzer(Scheduler* scheduler, Control* control);
+	explicit Analyzer(Config* config, Control* control);
 	~Analyzer();
 
 	void checkVideoFrame(bool check, unsigned char* data);
 
 private:
-	Scheduler* _scheduler;
+	Config* _config;
 	Control* _control;
 	Algorithm* _algorithm;
 

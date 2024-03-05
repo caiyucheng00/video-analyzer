@@ -4,18 +4,29 @@
 #include <json/value.h>
 #include <Python.h>
 #include "Control.h"
-#include "Scheduler.h"
+#include "Config.h"
 #include "AlgorithmWithAPI.h"
 #include "AlgorithmWithPy.h"
 #include "Utils/PutText.h"
 #include "Utils/Log.h"
 
-Analyzer::Analyzer(Scheduler* scheduler, Control* control) :
-	_scheduler(scheduler),
+Analyzer::Analyzer(Config* config, Control* control) :
+	_config(config),
 	_control(control)
 {
 	Py_SetPythonHome(L"D:\\Developer\\Python\\Anaconda3\\envs\\video-analyzer");
-	_algorithm = new AlgorithmWithPy(_scheduler->getConfig());   // 及时delete
+	std::string type = _config->algorithmType;
+
+	if ("api" == type) {
+		_algorithm = new AlgorithmWithAPI(_config);   // 及时delete
+	}
+	else if("py" == type) {
+		_algorithm = new AlgorithmWithPy(_config);   // 及时delete
+	}
+	else {
+		LOGE("Algorithm Type Error");
+	}
+	
 }
 
 Analyzer::~Analyzer()

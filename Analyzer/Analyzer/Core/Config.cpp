@@ -23,11 +23,10 @@ Config::Config(const char* file, const char* ip, short port) :
 
 		if (parseFromStream(builder, ifs, &root, &errs)) { //json文件写入root成功
 			this->adminHost = root["adminHost"].asString();
-			this->rootVideoDir = root["rootVideoDir"].asString();
-			this->subVideoDirFormat = root["subVideoDirFormat"].asString();
 			this->controlExecutorMaxNum = root["controlExecutorMaxNum"].asInt();
 			this->supportHardwareVideoDecode = root["supportHardwareVideoDecode"].asBool();
 			this->supportHardwareVideoEncode = root["supportHardwareVideoEncode"].asBool();
+			this->algorithmType = root["algorithmType"].asString();
 
 			Json::Value algorithmApiHosts = root["algorithmApiHosts"];
 			for (auto& item : algorithmApiHosts) {
@@ -57,11 +56,10 @@ void Config::show()
 	printf("config.serverIp=%s\n", serverIp);
 	printf("config.serverPort=%d\n", serverPort);
 	printf("config.adminHost=%s\n", adminHost.data());   // c_str()
-	printf("config.rootVideoDir=%s\n", rootVideoDir.data());
-	printf("config.subVideoDirFormat=%s\n", subVideoDirFormat.data());
 	printf("config.controlExecutorMaxNum=%d\n", controlExecutorMaxNum);
 	printf("config.supportHardwareVideoDecode=%d\n", supportHardwareVideoDecode);
 	printf("config.supportHardwareVideoEncode=%d\n", supportHardwareVideoEncode);
+	printf("config.algorithmType=%s\n", algorithmType.data());
 
 	for (int i = 0; i < algorithmApiHosts.size(); i++)
 	{

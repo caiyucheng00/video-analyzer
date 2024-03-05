@@ -35,11 +35,10 @@ public:
 	short serverPort = 0;
 
 	std::string adminHost;
-	std::string rootVideoDir;
-	std::string subVideoDirFormat;
 	int controlExecutorMaxNum = 0;
 	bool supportHardwareVideoDecode = false;
 	bool supportHardwareVideoEncode = false;
+	std::string algorithmType;
 	std::vector<std::string> algorithmApiHosts;
 
 	// 状态

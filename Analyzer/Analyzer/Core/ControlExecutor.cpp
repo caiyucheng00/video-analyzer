@@ -84,7 +84,7 @@ bool ControlExecutor::start(std::string& result_msg)
 		result_msg = "pull stream connect error";
 		return false;
 	}
-	_analyzer = new Analyzer(_scheduler, _control);  // 及时delete
+	_analyzer = new Analyzer(_scheduler->getConfig(), _control);  // 及时delete
 
 	_state = true;// 将执行状态设置为true 开始执行
 
