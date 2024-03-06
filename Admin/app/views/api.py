@@ -7,18 +7,18 @@ import threading
 font_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/font/hei.ttf"
 captcha = Captcha(font_path=font_path)
 
-def api_getControls(request):
 
+def api_getControls(request):
     code = 0
     msg = "error"
     mediaServerState = False
     ananyServerState = False
 
-    atDBControls = [] #数据库中存储的布控数据
+    atDBControls = []  # 数据库中存储的布控数据
 
     try:
-        __online_streams_dict = {}  #在线的视频流
-        __online_controls_dict = {} #在线的布控数据
+        __online_streams_dict = {}  # 在线的视频流
+        __online_controls_dict = {}  # 在线的布控数据
 
         try:
             __streams = base_media.getMediaList()
@@ -39,41 +39,42 @@ def api_getControls(request):
                 pass
 
         sql = "select ac.*,ab.name as behavior_name from av_control ac left join av_behavior as ab on ac.behavior_code=ab.code order by ac.id desc"
-        atDBControls = base_djangoSql.select(sql) #数据库中存储的布控数据
-        atDBControlCodeSet = set() # 数据库中所有布控code的set
+        atDBControls = base_djangoSql.select(sql)  # 数据库中存储的布控数据
+        atDBControlCodeSet = set()  # 数据库中所有布控code的set
 
         for atDBControl in atDBControls:
             atDBControlCodeSet.add(atDBControl.get("code"))
 
-            atDBControl_stream_code = "%s_%s"%(atDBControl["stream_app"],atDBControl["stream_name"])
+            atDBControl_stream_code = "%s_%s" % (atDBControl["stream_app"], atDBControl["stream_name"])
             atDBControl["create_time"] = atDBControl["create_time"].strftime("%Y-%m-%d %H:%M")
 
             if __online_streams_dict.get(atDBControl_stream_code):
-                atDBControl["stream_active"] = True # 当前视频流在线
+                atDBControl["stream_active"] = True  # 当前视频流在线
             else:
-                atDBControl["stream_active"] = False # 当前视频流不在线
+                atDBControl["stream_active"] = False  # 当前视频流不在线
 
             __online_control = __online_controls_dict.get(atDBControl["code"])
             atDBControl["checkFps"] = "0"
 
             if __online_control:
-                atDBControl["cur_state"] = 1 # 布控中
-                atDBControl["checkFps"] = "%.2f"%float(__online_control.get("checkFps"))
+                atDBControl["cur_state"] = 1  # 布控中
+                atDBControl["checkFps"] = "%.2f" % float(__online_control.get("checkFps"))
             else:
                 if 0 == int(atDBControl.get("state")):
-                    atDBControl["cur_state"] = 0 # 未布控
+                    atDBControl["cur_state"] = 0  # 未布控
                 else:
-                    atDBControl["cur_state"] = 5 # 布控中断
+                    atDBControl["cur_state"] = 5  # 布控中断
 
             if atDBControl.get("state") != atDBControl.get("cur_state"):
                 # 数据表中的布控状态和最新布控状态不一致，需要更新至最新状态
-                update_state_sql = "update av_control set state=%d where id=%d " % (atDBControl.get("cur_state"), atDBControl.get("id"))
+                update_state_sql = "update av_control set state=%d where id=%d " % (
+                atDBControl.get("cur_state"), atDBControl.get("id"))
                 base_djangoSql.execute(update_state_sql)
 
-        for code,control in __online_controls_dict.items():
+        for code, control in __online_controls_dict.items():
             if code not in atDBControlCodeSet:
                 # 布控数据在运行中，但却不存在本地数据表中，该数据为失控数据，需要关闭其运行状态
-                print("失控的布控数据，已启动停止布控",code,control)
+                print("失控的布控数据，已启动停止布控", code, control)
                 base_analyzer.control_cancel(code=code)
 
         code = 1000
@@ -89,14 +90,16 @@ def api_getControls(request):
         serverState = "<span style='color:red;font-size:14px;'>流媒体服务未运行，分析服务未运行<span>"
 
     res = {
-        "code":code,
-        "msg":msg,
-        "ananyServerState":ananyServerState,
-        "mediaServerState":mediaServerState,
-        "serverState":serverState,
-        "data":atDBControls
+        "code": code,
+        "msg": msg,
+        "ananyServerState": ananyServerState,
+        "mediaServerState": mediaServerState,
+        "serverState": serverState,
+        "data": atDBControls
     }
     return HttpResponseJson(res)
+
+
 def api_getStreams(request):
     code = 0
     msg = "error"
@@ -107,7 +110,7 @@ def api_getStreams(request):
         streams = base_media.getMediaList()
         mediaServerState = True
 
-        streams_in_camera_dict ={}
+        streams_in_camera_dict = {}
         cameras = base_djangoSql.select("select * from av_camera")
         cameras_dict = {}
         # 摄像头按照code生成字典
@@ -134,11 +137,11 @@ def api_getStreams(request):
             push_stream_name = camera.get("push_stream_name")
             code = "%s_%s" % (push_stream_app, push_stream_name)
 
-            camera_stream = streams_in_camera_dict.get(code,None)
+            camera_stream = streams_in_camera_dict.get(code, None)
 
             stream = {
                 "active": True if camera_stream else False,
-                "code":code,
+                "code": code,
                 "app": push_stream_app,
                 "name": push_stream_name,
                 "produce_speed": camera_stream.get("produce_speed") if camera_stream else "",
@@ -166,13 +169,15 @@ def api_getStreams(request):
     else:
         serverState = "<span style='color:red;font-size:14px;'>流媒体服务未运行</span>"
     res = {
-        "code":code,
-        "msg":msg,
+        "code": code,
+        "msg": msg,
         "mediaServerState": mediaServerState,
         "serverState": serverState,
-        "data":data
+        "data": data
     }
     return HttpResponseJson(res)
+
+
 def api_getIndex(request):
     # highcharts 例子 https://www.highcharts.com.cn/demo/highcharts/dynamic-update
     code = 0
@@ -180,7 +185,6 @@ def api_getIndex(request):
     os_info = {}
 
     try:
-
         osSystem = OSInfo()
         os_info = osSystem.info()
         code = 1000
@@ -190,11 +194,13 @@ def api_getIndex(request):
         msg = str(e)
 
     res = {
-        "code":code,
-        "msg":msg,
-        "os_info":os_info
+        "code": code,
+        "msg": msg,
+        "os_info": os_info
     }
+
     return HttpResponseJson(res)
+
 
 def api_controlAdd(request):
     code = 0
@@ -289,12 +295,13 @@ def api_controlAdd(request):
     else:
         msg = "the request method is not supported"
 
-
     res = {
-        "code":code,
-        "msg":msg
+        "code": code,
+        "msg": msg
     }
     return HttpResponseJson(res)
+
+
 def api_controlEdit(request):
     code = 0
     msg = "error"
@@ -306,7 +313,6 @@ def api_controlEdit(request):
         behaviorCode = params.get("behaviorCode")
         pushStream = True if '1' == params.get("pushStream") else False
         remark = params.get("remark")
-
 
         if controlCode and behaviorCode:
             try:
@@ -335,12 +341,12 @@ def api_controlEdit(request):
     else:
         msg = "the request method is not supported"
 
-
     res = {
-        "code":code,
-        "msg":msg
+        "code": code,
+        "msg": msg
     }
     return HttpResponseJson(res)
+
 
 def api_analyzerControlAdd(request):
     code = 0
@@ -358,12 +364,12 @@ def api_analyzerControlAdd(request):
             except:
                 pass
             if control:
-                __state,__msg = base_analyzer.control_add(
+                __state, __msg = base_analyzer.control_add(
                     code=controlCode,
                     behaviorCode=control.behavior_code,
-                    streamUrl=base_media.get_rtspUrl(control.stream_app, control.stream_name), #拉流地址
+                    streamUrl=base_media.get_rtspUrl(control.stream_app, control.stream_name),  # 拉流地址
                     pushStream=control.push_stream,
-                    pushStreamUrl=base_media.get_rtspUrl(control.push_stream_app,control.push_stream_name), # 推流地址
+                    pushStreamUrl=base_media.get_rtspUrl(control.push_stream_app, control.push_stream_name),  # 推流地址
                 )
 
                 msg = __msg
@@ -380,10 +386,12 @@ def api_analyzerControlAdd(request):
     else:
         msg = "请求方法不支持"
     res = {
-        "code":code,
-        "msg":msg
+        "code": code,
+        "msg": msg
     }
     return HttpResponseJson(res)
+
+
 def api_analyzerControlCancel(request):
     code = 0
     msg = "error"
@@ -420,10 +428,11 @@ def api_analyzerControlCancel(request):
         msg = "请求方法不支持"
 
     res = {
-        "code":code,
-        "msg":msg
+        "code": code,
+        "msg": msg
     }
     return HttpResponseJson(res)
+
 
 def api_getVerifyCode(request):
     """
@@ -435,17 +444,12 @@ def api_getVerifyCode(request):
 
     action = params.get("action")
 
-    if action in ["login","reg"]:
+    if action in ["login", "reg"]:
         state, verify_code, verify_img_byte = captcha.getVerifyCode()
 
-        key = action+"_verify_code"
-        request.session[key]=verify_code
+        key = action + "_verify_code"
+        request.session[key] = verify_code
 
         return HttpResponse(verify_img_byte)
     else:
         return HttpResponse("error")
-
-
-
-
-

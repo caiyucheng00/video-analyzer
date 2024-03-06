@@ -1,5 +1,5 @@
-#ifndef ANALYZER_REQUEST_H
-#define ANALYZER_REQUEST_H
+#ifndef __REQUEST__H_
+#define __REQUEST__H_
 /*
 curl 静态库下载地址
 https://curl.se/download.html
@@ -18,16 +18,14 @@ https://blog.csdn.net/houxian1103/article/details/123343248
 */
 #include <string>
 
-    class Request
-    {
-    public:
-        Request();
-        ~Request();
+class Request
+{
+public:
+    Request();
+    ~Request();
 
-    public:
-        bool get(const char* url, std::string& response);
-        bool post(const char* url, const char* data, std::string& response);
-
-    };
+    bool get(const char* url, std::string& response);
+    bool post(const char* url, const char* data, std::string& response);
+};
 
 #endif //ANALYZER_REQUEST_H

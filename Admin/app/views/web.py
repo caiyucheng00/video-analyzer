@@ -1,45 +1,47 @@
 from app.views.ViewsBase import *
 from app.models import *
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from app.utils.Utils import validate_email, validate_tel,gen_random_code,gen_control_code
+from app.utils.Utils import validate_email, validate_tel, gen_random_code, gen_control_code
 
 
 def web_index(request):
-    context = {
-
-    }
+    context = {}
 
     return render(request, 'app/web_index.html', context)
 
+
 def web_stream(request):
-    context = {
-    }
+    context = {}
 
     # data = Camera.objects.all().order_by("-sort")
 
-    return render(request, 'app/web_stream.html',context)
+    return render(request, 'app/web_stream.html', context)
+
 
 def web_stream_play(request):
     context = {
     }
     params = parse_get_params(request)
-    app = params.get("app",None)
-    name = params.get("name",None)
+    app = params.get("app", None)
+    name = params.get("name", None)
 
     if app and name:
         context["url"] = base_media.get_flvUrl(app, name)
     else:
-        return render(request, 'app/message.html', {"msg": "请通过视频流管理进入", "is_success": False, "redirect_url": "/stream"})
+        return render(request, 'app/message.html',
+                      {"msg": "请通过视频流管理进入", "is_success": False, "redirect_url": "/stream"})
 
     context["url_true"] = True
     return render(request, 'app/web_stream_play.html', context)
+
 
 def web_control(request):
     context = {
     }
 
     return render(request, 'app/web_control.html', context)
+
 
 def web_control_add(request):
     context = {
@@ -50,10 +52,11 @@ def web_control_add(request):
     context["handle"] = "add"
     context["control"] = {
         "code": gen_control_code(),
-        "push_stream":False
+        "push_stream": False
     }
 
     return render(request, 'app/web_control_handle.html', context)
+
 
 def web_control_edit(request):
     context = {
@@ -72,13 +75,16 @@ def web_control_edit(request):
         context["control_stream_flvUrl"] = base_media.get_flvUrl(control.stream_app, control.stream_name)
         return render(request, 'app/web_control_handle.html', context)
     except:
-        return render(request, 'app/message.html', {"msg": "请通过布控管理进入", "is_success": False, "redirect_url": "/control"})
+        return render(request, 'app/message.html',
+                      {"msg": "请通过布控管理进入", "is_success": False, "redirect_url": "/control"})
+
 
 def web_warning(request):
     context = {
 
     }
-    return render(request, 'warning.html',context)
+    return render(request, 'warning.html', context)
+
 
 def web_notification(request):
     context = {
@@ -86,23 +92,21 @@ def web_notification(request):
     }
     return render(request, 'notification.html', context)
 
-def web_behavior(request):
-    context = {
 
-    }
+def web_behavior(request):
+    context = {}
     print(base_behaviors)
     context["data"] = base_behaviors
 
-
-
-
     return render(request, 'app/web_behavior.html', context)
+
 
 def web_profile(request):
     context = {
 
     }
     return render(request, 'profile.html', context)
+
 
 def web_logout(request):
     if request.session.has_key(base_session_key_user):
@@ -112,9 +116,7 @@ def web_logout(request):
 
 
 def web_login(request):
-    context = {
-
-    }
+    context = {}
 
     if request.method == 'POST':
         code = 0
@@ -135,7 +137,8 @@ def web_login(request):
             if True or verify_code == session_verify_code:
                 try:
                     del request.session["login_verify_code"]
-                except:pass
+                except:
+                    pass
 
                 if validate_email(username):
                     try:
@@ -177,4 +180,4 @@ def web_login(request):
         }
         return HttpResponseJson(res)
 
-    return render(request, 'app/web_login.html',context)
+    return render(request, 'app/web_login.html', context)

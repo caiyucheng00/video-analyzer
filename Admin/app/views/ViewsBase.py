@@ -18,14 +18,15 @@ base_behaviors = base_djangoSql.select("select * from av_behavior")
 
 base_session_key_user = "user"
 
+
 def getUser(request):
     user = request.session.get(base_session_key_user)
     # request.session.get("user") = {'id': 1, 'username': 'admin', 'email': '786251107@qq.com', 'last_login': '2022-06-03 22:33:21'}
 
     return user
 
-def parse_get_params(request):
 
+def parse_get_params(request):
     params = {}
     for k in request.GET:
         params.__setitem__(k, request.GET.get(k))
@@ -34,15 +35,14 @@ def parse_get_params(request):
 
 
 def parse_post_params(request):
-
     params = {}
     for k in request.POST:
         params.__setitem__(k, request.POST.get(k))
 
     return params
 
-def HttpResponseJson(res):
 
+def HttpResponseJson(res):
     def json_dumps_default(obj):
         if hasattr(obj, 'isoformat'):
             return obj.isoformat()

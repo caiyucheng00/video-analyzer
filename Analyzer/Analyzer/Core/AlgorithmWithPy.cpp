@@ -23,11 +23,7 @@ AlgorithmWithPy::AlgorithmWithPy(Config* config) :
 	_module = PyImport_ImportModule("Algorithm");
 	_class = PyObject_GetAttrString(_module, "Algorithm");
 
-	PyObject* pyArgs = PyTuple_New(2);
-	PyTuple_SetItem(pyArgs, 0, Py_BuildValue("s", "sun"));
-	PyTuple_SetItem(pyArgs, 1, Py_BuildValue("i", "30"));
-
-	_object = PyEval_CallObject(_class, pyArgs);   // 实例化
+	_object = PyEval_CallObject(_class, NULL);   // 实例化
 
 	_func_imageClassify = PyObject_GetAttrString(_object, "imageClassify");
 	_func_imageClassifyArgs = PyTuple_New(2);
