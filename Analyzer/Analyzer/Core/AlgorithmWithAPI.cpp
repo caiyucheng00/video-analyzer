@@ -48,6 +48,7 @@ void AlgorithmWithAPI::imageClassify(int height, int width, unsigned char* bgr, 
 	std::string data = param.toStyledString();
 	param = NULL;
 
+	int64_t start_time = getCurTime();
 	Request request;
 	std::string response;
 	request.post(url.data(), data.data(), response);
@@ -63,6 +64,10 @@ void AlgorithmWithAPI::imageClassify(int height, int width, unsigned char* bgr, 
 	{
 		classify_result = "";
 	}
+
+	int64_t end_time = getCurTime();
+
+	LOGI("cost time=%i", end_time - start_time);
 }
 
 bool AlgorithmWithAPI::analy_turboJpeg_compress(int height, int width, int channels, unsigned char* bgr, unsigned char*& out_data, unsigned long* out_size)

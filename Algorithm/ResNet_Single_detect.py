@@ -64,9 +64,9 @@ def prediction(model, device, image):
     model.eval()
     with torch.no_grad():
         # distribute data to device
-        image = image.to(device)
-        output = model(image)
-        y_pred = output.max(1, keepdim=True)[1]  # location of max log-probability as prediction
-        y_pred = y_pred.item() if y_pred.numel() == 1 else y_pred.squeeze().cpu().numpy().tolist()
+        image = image.to(device)   # (1, 3, 512, 512)  tensor
+        output = model(image)    # (1,8)  tensor
+        y_pred = output.max(1, keepdim=True)[1]  #(1,1) tensor  location of max log-probability as prediction
+        y_pred = y_pred.item() if y_pred.numel() == 1 else y_pred.squeeze().cpu().numpy().tolist()   #int
 
     return y_pred
