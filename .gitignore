@@ -6,6 +6,7 @@
 zlm/www/
 zlm/log/
 data/
+*.engine
 
 # User-specific files
 *.rsuser

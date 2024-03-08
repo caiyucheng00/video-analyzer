@@ -41,6 +41,9 @@
     <ClCompile Include="Core\AlgorithmWithPy.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\AlgorithmWithTensorRT.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Algorithm.h">
@@ -92,6 +95,9 @@
       <Filter>Core\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Core\AlgorithmWithPy.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\AlgorithmWithTensorRT.h">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>

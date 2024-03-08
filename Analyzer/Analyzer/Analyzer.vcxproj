@@ -133,18 +133,20 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\numpy\include;D:\Developer\Python\Anaconda3\envs\video-analyzer\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\opencv\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\jsoncpp\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\jpeg-turbo\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\ffmpeg\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\event\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.3\include;D:\Developer\C++\Library\TensorRT\TensorRT-8.5.3.1\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\numpy\include;D:\Developer\Python\Anaconda3\envs\video-analyzer\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\opencv\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\jsoncpp\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\jpeg-turbo\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\ffmpeg\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\event\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/D _CRT_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>..\3rdparty\curl\x64\lib\Debug\libcurld.lib;..\3rdparty\event\x64\lib\Debug\*;ws2_32.lib;iphlpapi.lib;..\3rdparty\jsoncpp\x64\lib\Debug\jsoncpp.lib;..\3rdparty\opencv\x64\vc15\lib\opencv_world3410d.lib;..\3rdparty\opencv\x64\vc15\lib\opencv_world3410.lib;avcodec.lib;avformat.lib;avutil.lib;avdevice.lib;avfilter.lib;postproc.lib;swresample.lib;swscale.lib;python38.lib;npymath.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\numpy\x64\lib;D:\Developer\Python\Anaconda3\envs\video-analyzer\libs;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\jpeg-turbo\x64\lib\Release;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\curl\x64\lib\Debug;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\curl\x64\lib\Release;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\opencv\x64\vc15\lib;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\ffmpeg\x64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>..\3rdparty\curl\x64\lib\Debug\libcurld.lib;..\3rdparty\event\x64\lib\Debug\*;ws2_32.lib;iphlpapi.lib;..\3rdparty\jsoncpp\x64\lib\Debug\jsoncpp.lib;..\3rdparty\opencv\x64\vc15\lib\opencv_world3410d.lib;..\3rdparty\opencv\x64\vc15\lib\opencv_world3410.lib;avcodec.lib;avformat.lib;avutil.lib;avdevice.lib;avfilter.lib;postproc.lib;swresample.lib;swscale.lib;python38.lib;npymath.lib;nvinfer.lib;nvparsers.lib;nvonnxparser.lib;nvinfer_plugin.lib;cublas.lib;cublasLt.lib;cuda.lib;cudadevrt.lib;cudart.lib;cudart_static.lib;cudnn.lib;cudnn_adv_infer.lib;cudnn_adv_infer64_8.lib;cudnn_adv_train.lib;cudnn_adv_train64_8.lib;cudnn_cnn_infer.lib;cudnn_cnn_infer64_8.lib;cudnn_cnn_train.lib;cudnn_cnn_train64_8.lib;cudnn_ops_infer.lib;cudnn_ops_infer64_8.lib;cudnn_ops_train.lib;cudnn_ops_train64_8.lib;cudnn64_8.lib;cufft.lib;cufftw.lib;curand.lib;cusolver.lib;cusolverMg.lib;cusparse.lib;nppc.lib;nppial.lib;nppicc.lib;nppidei.lib;nppif.lib;nppig.lib;nppim.lib;nppist.lib;nppisu.lib;nppitc.lib;npps.lib;nvblas.lib;nvjpeg.lib;nvml.lib;nvptxcompiler_static.lib;nvrtc.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.3\lib\x64;D:\Developer\C++\Library\TensorRT\TensorRT-8.5.3.1\lib;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\numpy\x64\lib;D:\Developer\Python\Anaconda3\envs\video-analyzer\libs;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\jpeg-turbo\x64\lib\Release;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\curl\x64\lib\Debug;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\curl\x64\lib\Release;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\opencv\x64\vc15\lib;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\ffmpeg\x64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\AlgorithmWithTensorRT.cpp" />
     <ClCompile Include="Core\AlgorithmWithPy.cpp" />
     <ClCompile Include="Core\AlgorithmWithAPI.cpp" />
     <ClCompile Include="Core\Algorithm.cpp" />
@@ -161,6 +163,7 @@
     <ClCompile Include="Core\Utils\PutText.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\AlgorithmWithTensorRT.h" />
     <ClInclude Include="Core\AlgorithmWithPy.h" />
     <ClInclude Include="Core\AlgorithmWithAPI.h" />
     <ClInclude Include="Core\Algorithm.h" />

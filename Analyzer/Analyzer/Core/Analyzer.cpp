@@ -7,6 +7,7 @@
 #include "Config.h"
 #include "AlgorithmWithAPI.h"
 #include "AlgorithmWithPy.h"
+#include "AlgorithmWithTensorRT.h"
 #include "Utils/PutText.h"
 #include "Utils/Log.h"
 
@@ -22,6 +23,9 @@ Analyzer::Analyzer(Config* config, Control* control) :
 	}
 	else if("py" == type) {
 		_algorithm = new AlgorithmWithPy(_config);   // 及时delete
+	}
+	else if ("tensorrt" == type) {
+		_algorithm = new AlgorithmWithTensorRT(_config);   // 及时delete
 	}
 	else {
 		LOGE("Algorithm Type Error");

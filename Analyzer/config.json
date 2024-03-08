@@ -4,7 +4,7 @@
   "controlExecutorMaxNum": 200,
   "supportHardwareVideoDecode": false,
   "supportHardwareVideoEncode": false,
-  "algorithmType": "api",
+  "algorithmType": "tensorrt",
   "algorithmApiHosts": [
     "http://127.0.0.1:9003"
   ]
