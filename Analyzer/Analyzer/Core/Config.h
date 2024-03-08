@@ -39,6 +39,7 @@ public:
 	bool supportHardwareVideoDecode = false;
 	bool supportHardwareVideoEncode = false;
 	std::string algorithmType;
+	std::string engine;
 	std::vector<std::string> algorithmApiHosts;
 
 	// 状态

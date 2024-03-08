@@ -1,11 +1,12 @@
 #include "AlgorithmWithTensorRT.h"
+#include "Config.h"
 
 
 AlgorithmWithTensorRT::AlgorithmWithTensorRT(Config* config) :
 	_config(config)
 {
 	// 从文件中读取已保存的引擎
-	std::ifstream engineFile("D:\\Developer\\Visual Studio\\Project\\TensorRT\\resnet50.engine", std::ios::binary);
+	std::ifstream engineFile(_config->engine, std::ios::binary);
 	std::vector<char> engineData((std::istreambuf_iterator<char>(engineFile)), std::istreambuf_iterator<char>());
 	engineFile.close();
 
@@ -48,7 +49,7 @@ void AlgorithmWithTensorRT::imageClassify(int height, int width, unsigned char* 
 	cudaMemcpy(_outputData, _deviceOutput, sizeof(float) * 8, cudaMemcpyDeviceToHost);
 
 	// 后处理（这里假设你有一个名为 postprocess 的函数来处理输出数据）
-	postprocess(_outputData);
+	classify_result = postprocess(_outputData);
 }
 
 
@@ -72,7 +73,7 @@ void AlgorithmWithTensorRT::preprocess(cv::Mat image, float* inputData)
 	}
 }
 
-void AlgorithmWithTensorRT::postprocess(const float* outputData)
+std::string AlgorithmWithTensorRT::postprocess(const float* outputData)
 {
 	// 假设找出最大概率的类别作为预测结果
 	int maxIndex = 0;
@@ -83,6 +84,6 @@ void AlgorithmWithTensorRT::postprocess(const float* outputData)
 			maxProbability = outputData[i];
 		}
 	}
-	std::cout << "Predicted class: " << maxIndex << ", Probability: " << maxProbability << std::endl;
-
+	//std::cout << "Predicted class: " << maxIndex << ", Probability: " << maxProbability << std::endl;
+	return _labels[maxIndex];
 }

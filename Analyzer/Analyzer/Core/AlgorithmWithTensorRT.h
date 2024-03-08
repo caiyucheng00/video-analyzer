@@ -2,6 +2,8 @@
 #define __ALGORITHMWITHTENSORRT__H_
 
 #include "Algorithm.h"
+#include <vector>
+#include <string>
 #include <opencv2/opencv.hpp>
 #include <NvInfer.h>
 #include <../samples/common/logger.h> 
@@ -19,7 +21,7 @@ public:
 
 private:
 	void preprocess(cv::Mat image, float* inputData);
-	void postprocess(const float* outputData);
+	std::string postprocess(const float* outputData);
 
 	Config* _config;
 	sample::Logger _logger;
@@ -32,6 +34,8 @@ private:
 	void* _deviceInput;
 	void* _deviceOutput;
 	void* _bindings[2];
+
+	std::vector<std::string> _labels{ "出苗期","分蘖期","拔节期","孕穗期","抽穗期","开花期","灌浆期","成熟期"};
 };
 
 #endif

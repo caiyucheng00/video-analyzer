@@ -4,7 +4,8 @@
   "controlExecutorMaxNum": 200,
   "supportHardwareVideoDecode": false,
   "supportHardwareVideoEncode": false,
-  "algorithmType": "tensorrt",
+  "algorithmType": "api",
+  "engine": "D:\\Developer\\Visual Studio\\Project\\video-analyzer\\Analyzer\\resnet50.engine",
   "algorithmApiHosts": [
     "http://127.0.0.1:9003"
   ]

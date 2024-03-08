@@ -27,6 +27,9 @@ Config::Config(const char* file, const char* ip, short port) :
 			this->supportHardwareVideoDecode = root["supportHardwareVideoDecode"].asBool();
 			this->supportHardwareVideoEncode = root["supportHardwareVideoEncode"].asBool();
 			this->algorithmType = root["algorithmType"].asString();
+			if ("tensorrt" == this->algorithmType) {
+				this->engine = root["engine"].asString();
+			}
 
 			Json::Value algorithmApiHosts = root["algorithmApiHosts"];
 			for (auto& item : algorithmApiHosts) {
@@ -60,6 +63,9 @@ void Config::show()
 	printf("config.supportHardwareVideoDecode=%d\n", supportHardwareVideoDecode);
 	printf("config.supportHardwareVideoEncode=%d\n", supportHardwareVideoEncode);
 	printf("config.algorithmType=%s\n", algorithmType.data());
+	if ("tensorrt" == this->algorithmType) {
+		printf("config.engine=%s\n", engine.data());
+	}
 
 	for (int i = 0; i < algorithmApiHosts.size(); i++)
 	{

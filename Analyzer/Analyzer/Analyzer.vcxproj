@@ -134,7 +134,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.3\include;D:\Developer\C++\Library\TensorRT\TensorRT-8.5.3.1\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\numpy\include;D:\Developer\Python\Anaconda3\envs\video-analyzer\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\opencv\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\jsoncpp\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\jpeg-turbo\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\ffmpeg\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\event\include;D:\Developer\Visual Studio\Project\video-analyzer\Analyzer\3rdparty\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/D _CRT_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D _CRT_SECURE_NO_WARNINGS /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
