@@ -13,7 +13,7 @@ public:
 	AlgorithmWithPy(Config* config);
 	virtual ~AlgorithmWithPy();
 
-	virtual void imageClassify(int height, int width, unsigned char* bgr, std::string& classify_result);
+	virtual void doAlgorithm(cv::Mat image, std::vector<AlgorithmResult>& results);
 
 private:
 	Config* _config;

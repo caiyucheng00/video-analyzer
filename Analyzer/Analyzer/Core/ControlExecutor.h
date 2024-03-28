@@ -10,6 +10,7 @@ class Control;
 class AVPullStream;
 class AVPushStream;
 class Analyzer;
+class Model;
 
 struct VideoFrame
 {
@@ -71,7 +72,7 @@ public:
 	// Parameter: Scheduler * scheduler
 	// Parameter: Control * control
 	//************************************
-	explicit ControlExecutor(Scheduler* scheduler, Control* control);
+	explicit ControlExecutor(Scheduler* scheduler, Control* control, Model* model);
 	~ControlExecutor();   // 设置state = false
 
 	bool getState();
@@ -97,6 +98,7 @@ public:
 	AVPullStream* _pullStream;
 	AVPushStream* _pushStream;
 	Analyzer* _analyzer;
+	Model* _model;
 
 private:
 	bool _state;

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 class Config
 {
@@ -39,7 +40,7 @@ public:
 	bool supportHardwareVideoDecode = false;
 	bool supportHardwareVideoEncode = false;
 	std::string algorithmType;
-	std::string engine;
+	std::map<std::string, std::string> modelPath;
 	std::vector<std::string> algorithmApiHosts;
 
 	// 状态

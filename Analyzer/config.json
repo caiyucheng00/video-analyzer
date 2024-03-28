@@ -5,7 +5,13 @@
   "supportHardwareVideoDecode": false,
   "supportHardwareVideoEncode": false,
   "algorithmType": "tensorrt",
-  "engine": "D:\\Developer\\Visual Studio\\Project\\video-analyzer\\Analyzer\\resnet50.engine",
+  "modelPath": {
+    "PHE_WHEAT": "D:\\Developer\\Visual Studio\\Project\\video-analyzer\\Analyzer\\resnet50.engine",
+    "PHE_RICE": "",
+    "SPIKE_WHEAT": "",
+    "SPIKE_RICE": "",
+    "SEEDLING_WHEAT": ""
+  },
   "algorithmApiHosts": [
     "http://127.0.0.1:9003"
   ]

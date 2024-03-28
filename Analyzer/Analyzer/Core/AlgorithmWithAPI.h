@@ -12,7 +12,7 @@ public:
 	AlgorithmWithAPI(Config* config);
 	virtual ~AlgorithmWithAPI();
 
-	virtual void imageClassify(int height, int width, unsigned char* bgr, std::string& classify_result);
+	virtual void doAlgorithm(cv::Mat image, std::vector<AlgorithmResult>& results);
 
 	static bool analy_turboJpeg_compress(int height, int width, int channels, unsigned char* bgr, unsigned char*& out_data, unsigned long* out_size);
 	static bool analy_compressBgrAndEncodeBase64(int height, int width, int channels, unsigned char* bgr, std::string& out_base64);

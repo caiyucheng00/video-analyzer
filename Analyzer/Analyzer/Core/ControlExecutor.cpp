@@ -6,6 +6,7 @@
 #include "AvPullStream.h"
 #include "AvPushStream.h"
 #include "Analyzer.h"
+#include "Patterns/Model.h"
 
 extern "C" {
 #include "libswscale/swscale.h"
@@ -13,12 +14,13 @@ extern "C" {
 #include <libswresample/swresample.h>
 }
 
-ControlExecutor::ControlExecutor(Scheduler* scheduler, Control* control) :
+ControlExecutor::ControlExecutor(Scheduler* scheduler, Control* control, Model* model) :
 	_scheduler(scheduler),
 	_control(new Control(*control)),
 	_pullStream(nullptr),
 	_pushStream(nullptr),
-	_state(false)   // 将初始执行状态设置为false
+	_state(false),   // 将初始执行状态设置为false
+	_model(model)
 {
 	_control->executorStartTimestamp = getCurTimestamp();
 }
@@ -84,7 +86,7 @@ bool ControlExecutor::start(std::string& result_msg)
 		result_msg = "pull stream connect error";
 		return false;
 	}
-	_analyzer = new Analyzer(_scheduler->getConfig(), _control);  // 及时delete
+	_analyzer = new Analyzer(_scheduler->getConfig(), _control, _model);  // 及时delete
 
 	_state = true;// 将执行状态设置为true 开始执行
 

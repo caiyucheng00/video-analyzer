@@ -2,6 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include "Utils/Log.h"
 #include "Utils/Common.h"
+#include "Analyzer.h"
 
 #ifndef _DEBUG
 #include "numpy/arrayobject.h"
@@ -34,10 +35,8 @@ AlgorithmWithPy::~AlgorithmWithPy()
 	Py_Finalize();
 }
 
-void AlgorithmWithPy::imageClassify(int height, int width, unsigned char* bgr, std::string& classify_result)
+void AlgorithmWithPy::doAlgorithm(cv::Mat image, std::vector<AlgorithmResult>& results)
 {
-	cv::Mat image(height, width, CV_8UC3, bgr);
-
 #ifndef _DEBUG
 	// cv::Mat->numpy
 	int r = image.rows;
@@ -68,7 +67,9 @@ void AlgorithmWithPy::imageClassify(int height, int width, unsigned char* bgr, s
 	if (NULL != response_c) {
 		std::string response(response_c);
 		LOGI("response:%s \n", response.data());
-		classify_result = response;
+		AlgorithmResult result;
+		result.class_name = response.data();
+		results.push_back(result);
 	}
 
 #ifndef _DEBUG

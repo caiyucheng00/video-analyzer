@@ -44,6 +44,12 @@
     <ClCompile Include="Core\AlgorithmWithTensorRT.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Patterns\Model.cpp">
+      <Filter>Core\Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Patterns\Strategy.cpp">
+      <Filter>Core\Patterns</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Algorithm.h">
@@ -100,6 +106,12 @@
     <ClInclude Include="Core\AlgorithmWithTensorRT.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Patterns\Model.h">
+      <Filter>Core\Patterns</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Patterns\Strategy.h">
+      <Filter>Core\Patterns</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -107,6 +119,9 @@
     </Filter>
     <Filter Include="Core\Utils">
       <UniqueIdentifier>{fa6f8f36-3dd0-4170-aebc-6cd5fe2cad52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Patterns">
+      <UniqueIdentifier>{b6699612-3297-4d34-b9f0-26012dc3c573}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

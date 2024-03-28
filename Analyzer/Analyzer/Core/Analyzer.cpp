@@ -1,4 +1,5 @@
 #include "Analyzer.h"
+#include <typeinfo>
 #include <opencv2/opencv.hpp>
 #include <json/json.h>
 #include <json/value.h>
@@ -10,8 +11,9 @@
 #include "AlgorithmWithTensorRT.h"
 #include "Utils/PutText.h"
 #include "Utils/Log.h"
+#include "Patterns/Model.h"
 
-Analyzer::Analyzer(Config* config, Control* control) :
+Analyzer::Analyzer(Config* config, Control* control, Model* model) :
 	_config(config),
 	_control(control)
 {
@@ -25,7 +27,7 @@ Analyzer::Analyzer(Config* config, Control* control) :
 		_algorithm = new AlgorithmWithPy(_config);   // 及时delete
 	}
 	else if ("tensorrt" == type) {
-		_algorithm = new AlgorithmWithTensorRT(_config);   // 及时delete
+		_algorithm = new AlgorithmWithTensorRT(model, _control->behaviorCode);   // 及时delete
 	}
 	else {
 		LOGE("Algorithm Type Error");
@@ -46,10 +48,8 @@ void Analyzer::checkVideoFrame(bool check, unsigned char* data)
 	cv::Mat image(_control->videoHeight, _control->videoWidth, CV_8UC3, data);
 	
 	if (check) {
-		_algorithm->imageClassify(_control->videoHeight, _control->videoWidth, data, classify_result);
-		if (classify_result.length() > 0) {
-			result_str = classify_result;
-		}
+		_algorithm->doAlgorithm(image, _results);
+		//result_str = _results[0].class_name;
 	}
 	
 	//LOGI("%s", result_str);   //utf8

@@ -3,17 +3,21 @@
 #include "Control.h"
 #include "ControlExecutor.h"
 #include "Utils/Log.h"
+#include "Patterns/Model.h"
 
 Scheduler::Scheduler(Config* config) :
 	_config(config),
 	_state(false)
 {
-
+	_factory = new ModelFactory(_config);
 }
 
 Scheduler::~Scheduler()
 {
-
+	if (_factory) {
+		delete _factory;
+		_factory = nullptr;
+	}
 }
 
 Config* Scheduler::getConfig()
@@ -88,7 +92,7 @@ void Scheduler::apiControlAdd(Control* control, int& result_code, std::string& r
 	}
 	else                                                            // 满足config限制数量
 	{
-		ControlExecutor* executor = new ControlExecutor(this, control);  // 及时delete
+		ControlExecutor* executor = new ControlExecutor(this, control, _factory->getModel(control->behaviorCode));  // 及时delete
 
 		if (executor->start(result_msg)) {                       //executor成功
 			if (addExecutor(control, executor)) {  //添加executor到map成功

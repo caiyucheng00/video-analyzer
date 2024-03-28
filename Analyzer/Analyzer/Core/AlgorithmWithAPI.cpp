@@ -7,7 +7,7 @@
 #include "Utils/Common.h"
 #include "Utils/Request.h"
 #include "Utils/Log.h"
-//#include <windows.h>
+#include "Analyzer.h"
 
 #ifndef WIN32
 #include <opencv2/opencv.hpp>
@@ -31,9 +31,8 @@ AlgorithmWithAPI::~AlgorithmWithAPI()
 
 }
 
-void AlgorithmWithAPI::imageClassify(int height, int width, unsigned char* bgr, std::string& classify_result)
+void AlgorithmWithAPI::doAlgorithm(cv::Mat image, std::vector<AlgorithmResult>& results)
 {
-	cv::Mat image(height, width, CV_8UC3, bgr);
 	std::string imageBase64;
 	analy_compressBgrAndEncodeBase64(image.rows, image.cols, 3, image.data, imageBase64);
 
@@ -58,11 +57,9 @@ void AlgorithmWithAPI::imageClassify(int height, int width, unsigned char* bgr, 
 	Json::Value root;
 	JSONCPP_STRING errs;
 	if (reader->parse(response.c_str(), response.c_str() + std::strlen(response.c_str()), &root, &errs)) {
-		classify_result = root["result"].asString();
-	}
-	else
-	{
-		classify_result = "";
+		AlgorithmResult result;
+		result.class_name = root["result"].asString();
+		results.push_back(result);
 	}
 
 	int64_t end_time = getCurTime();

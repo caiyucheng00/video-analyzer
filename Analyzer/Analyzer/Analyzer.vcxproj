@@ -161,6 +161,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Core\Scheduler.cpp" />
     <ClCompile Include="Core\Utils\PutText.cpp" />
+    <ClCompile Include="Core\Patterns\Model.cpp" />
+    <ClCompile Include="Core\Patterns\Strategy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\AlgorithmWithTensorRT.h" />
@@ -181,6 +183,8 @@
     <ClInclude Include="Core\Utils\Request.h" />
     <ClInclude Include="Core\Utils\Version.h" />
     <ClInclude Include="Core\Utils\PutText.h" />
+    <ClInclude Include="Core\Patterns\Model.h" />
+    <ClInclude Include="Core\Patterns\Strategy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\config.json" />

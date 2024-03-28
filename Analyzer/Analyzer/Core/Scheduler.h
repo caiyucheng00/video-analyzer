@@ -10,6 +10,7 @@
 class Config;
 class ControlExecutor;
 class Control;
+class ModelFactory;
 
 class Scheduler
 {
@@ -96,6 +97,8 @@ private:
 
 	Config* _config;
 	bool _state;
+
+	ModelFactory* _factory;
 
 	std::map<std::string, ControlExecutor*> _executorMap; // <control.code,ControlExecutor*>
 	std::mutex                              _executorMapMtx;

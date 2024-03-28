@@ -27,9 +27,13 @@ Config::Config(const char* file, const char* ip, short port) :
 			this->supportHardwareVideoDecode = root["supportHardwareVideoDecode"].asBool();
 			this->supportHardwareVideoEncode = root["supportHardwareVideoEncode"].asBool();
 			this->algorithmType = root["algorithmType"].asString();
-			if ("tensorrt" == this->algorithmType) {
-				this->engine = root["engine"].asString();
-			}
+			
+			Json::Value modelPath = root["modelPath"];
+			this->modelPath["PHE_WHEAT"] = modelPath["PHE_WHEAT"].asString();
+			this->modelPath["PHE_RICE"] = modelPath["PHE_RICE"].asString();
+			this->modelPath["SPIKE_WHEAT"] = modelPath["SPIKE_WHEAT"].asString();
+			this->modelPath["SPIKE_RICE"] = modelPath["SPIKE_RICE"].asString();
+			this->modelPath["SEEDLING_WHEAT"] = modelPath["SEEDLING_WHEAT"].asString();
 
 			Json::Value algorithmApiHosts = root["algorithmApiHosts"];
 			for (auto& item : algorithmApiHosts) {
@@ -63,13 +67,18 @@ void Config::show()
 	printf("config.supportHardwareVideoDecode=%d\n", supportHardwareVideoDecode);
 	printf("config.supportHardwareVideoEncode=%d\n", supportHardwareVideoEncode);
 	printf("config.algorithmType=%s\n", algorithmType.data());
-	if ("tensorrt" == this->algorithmType) {
-		printf("config.engine=%s\n", engine.data());
-	}
 
-	for (int i = 0; i < algorithmApiHosts.size(); i++)
-	{
-		printf("config.algorithmApiHosts[%d]=%s\n", i, algorithmApiHosts[i].data());
+	if ("api" == this->algorithmType) {
+		for (int i = 0; i < algorithmApiHosts.size(); i++)
+		{
+			printf("config.algorithmApiHosts[%d]=%s\n", i, algorithmApiHosts[i].data());
+		}
 	}
+	else if ("tensorrt" == this->algorithmType) {
+		for (auto& item : modelPath) {
+			printf("config.modelPath[%s]=%s\n", item.first.data(), item.second.data());
+		}
+	}
+	
 	printf("--------end-------- \n");
 }
